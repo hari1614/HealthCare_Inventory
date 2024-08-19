@@ -1,4 +1,5 @@
 HealthCare Inventory 🚑📦
+
 HealthCare Inventory is a robust inventory management system designed for healthcare environments. It offers a comprehensive suite of features to optimize the tracking and management of medical supplies and equipment.
 
 Key Features 🌟
