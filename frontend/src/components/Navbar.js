@@ -306,7 +306,7 @@ const Navbar = () => {
                 className="bg-gray-500 hover:bg-gray-600 text-white font-medium text-sm shadow-xl hover:shadow-lg py-2 px-4 rounded focus:outline-none focus:shadow-outline flex items-center m-8 w-20"
                 onClick={openLogoutDialog}
               >
-                Logout
+                Logout 
               </Link>
             )}
           </div>
