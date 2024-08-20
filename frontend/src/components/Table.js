@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from "react";
+import Tooltip from "./reusable/Tooltip";
+import loadingGif from "../assets/loading.gif";
+import ConfirmDeleteModal from "./reusable/ConfirmDeleteModal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash, faPenSquare } from "@fortawesome/free-solid-svg-icons";
-import loadingGif from "../assets/loading.gif";
 import { useProductContext } from "./hooks/useProductContext";
 import { useProductActions } from "./hooks/useProductActions";
 import { getUnitAndKgOptions } from "./utils/utils";
 import { useSaveProduct } from "./hooks/useSaveProduct";
 import { formatDateToInputValue } from "./utils/dateUtils";
-import Tooltip from "./reusable/Tooltip";
 import { useAuthContext } from "./hooks/useAuthContext";
 import { taxDropdownOptions } from "./utils/utils";
+
 import "../css/Table.css";
 
 const Table = ({
@@ -30,6 +32,8 @@ const Table = ({
   const [selectedQuantity, setSelectedQuantity] = useState("1");
   const [selectedQuantityPrice, setSelectedQuantityPrice] = useState(price);
   const [isEditing, setIsEditing] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false); // Manage modal visibility
+  const [productToDelete, setProductToDelete] = useState(null); // Track product to delete
   const [taxRate, setTaxRate] = useState(12); // Default tax rate
   const [editedData, setEditedData] = useState({
     name,
@@ -117,6 +121,21 @@ const Table = ({
   };
 
   const handleDeleteClick = async () => {
+    setProductToDelete(_id); // Set the product ID to delete
+    setIsModalOpen(true); // Open the confirmation modal
+    // setIsLoading(true);
+    // setFeedback("");
+    // try {
+    //   const feedbackMessage = await handleDelete();
+    //   setFeedback(feedbackMessage);
+    // } catch (error) {
+    //   setFeedback("Failed to delete product");
+    // } finally {
+    //   setIsLoading(false);
+    // }
+  };
+
+  const confirmDelete = async () => {
     setIsLoading(true);
     setFeedback("");
     try {
@@ -126,7 +145,11 @@ const Table = ({
       setFeedback("Failed to delete product");
     } finally {
       setIsLoading(false);
+      setIsModalOpen(false); // Close the modal after deletion
     }
+  };
+  const cancelDelete = () => {
+    setIsModalOpen(false); // Just close the modal
   };
 
   const handleSaveClick = async () => {
@@ -340,6 +363,13 @@ const Table = ({
         >
           {feedback}
         </div>
+      )}
+      {isModalOpen && (
+        <ConfirmDeleteModal
+          isOpen={isModalOpen}
+          onClose={cancelDelete}
+          onConfirm={confirmDelete}
+        />
       )}
     </>
   );

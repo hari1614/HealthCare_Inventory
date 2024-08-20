@@ -2,6 +2,7 @@ import React, { useState, useRef } from "react";
 import { useProductContext } from "./hooks/useProductContext";
 import { useReactToPrint } from "react-to-print";
 import { taxDropdownOptions } from "./utils/utils";
+import { validateFormData } from "./utils/validation";
 
 const Billing = () => {
   const { products } = useProductContext();
@@ -29,7 +30,8 @@ const Billing = () => {
   const [taxAmount, setTaxAmount] = useState("");
   const [totalWithTax, setTotalWithTax] = useState("");
   const [isManualDiscount, setIsManualDiscount] = useState(false); // New state to track manual discount change
-
+  const [errors, setErrors] = useState({}); // State to hold validation errors
+  const [existingHSNCodes, setExistingHSNCodes] = useState([]); // List of existing HSN codes
   const invoiceRef = useRef();
 
   const handleInputChange = (e) => {
@@ -70,6 +72,18 @@ const Billing = () => {
   };
 
   const addProductToInvoice = () => {
+    // Validate form data before adding product to invoice
+    const validationErrors = validateFormData(formData, existingHSNCodes);
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+    const newErrors = validateFormData(formData, existingHSNCodes);
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
     if (!formData.itemName || !formData.pricePerItem || !formData.itemTaxRate)
       return;
 
@@ -96,7 +110,9 @@ const Billing = () => {
       unitAndKg: selectedProduct?.unitAndKg || "", // Add unitAndKg to invoice item
     };
 
+
     const updatedItems = [...invoiceItems, newItem];
+    setExistingHSNCodes([...existingHSNCodes, formData.hsnCode]);
     setInvoiceItems(updatedItems);
     updateTaxAndTotal(updatedItems);
 
@@ -256,6 +272,9 @@ const Billing = () => {
               className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               required
             />
+            {errors.hsnCode && (
+              <p className="text-red-500 text-xs">{errors.hsnCode}</p>
+            )}
           </div>
 
           <div>
@@ -270,6 +289,9 @@ const Billing = () => {
               className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               required
             />
+            {errors.quantity && (
+              <p className="text-red-500 text-xs">{errors.quantity}</p>
+            )}
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700">
@@ -299,6 +321,7 @@ const Billing = () => {
               className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               required
             />
+            {errors.mrp && <p className="text-red-500 text-xs">{errors.mrp}</p>}
           </div>
 
           <div>
@@ -313,6 +336,9 @@ const Billing = () => {
               className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               required
             />
+            {errors.pricePerItem && (
+              <p className="text-red-500 text-xs">{errors.pricePerItem}</p>
+            )}
           </div>
 
           <div>
@@ -378,7 +404,7 @@ const Billing = () => {
 
         <div className="mt-4">
           <label className="block text-sm font-medium text-gray-700">
-            <strong>Shipping Address</strong>
+           Shipping Address
           </label>
           <input
             type="text"
@@ -391,7 +417,7 @@ const Billing = () => {
 
         <div className="mt-4">
           <label className="block text-sm font-medium text-gray-700">
-            <strong>Delivery Address</strong>
+           Delivery Address
           </label>
           <input
             type="text"
@@ -482,16 +508,16 @@ const Billing = () => {
                   <strong>Billing Address:</strong>
                 </p>
                 <p className="text-gray-600 mb-6">{formData.deliveryAddress}</p>
-            
+
                 <p className="text-black">
                   <strong>Shipping Address:</strong>
                 </p>
                 <p className="text-gray-600 mb-6">{formData.shippingAddress}</p>
 
                 <p>
-                  <strong>Date: </strong>{new Date().toLocaleDateString()}
+                  <strong>Date: </strong>
+                  {new Date().toLocaleDateString()}
                 </p>
-
               </div>
               <div className="w-[45%] text-end">
                 <h2 className="text-lg font-bold text-black">Sold By</h2>
@@ -501,15 +527,13 @@ const Billing = () => {
                 <p className="text-gray-600">City, State, ZIP</p>
                 <p className="text-gray-600">Phone: (123) 456-7890</p>
                 <div className="mt-6">
-                <p>
-                  <strong>PAN No: </strong>AALCA017E
-                </p>
-                <p>
-                  <strong>GST Registration No: </strong>AALCA017E
-                </p>
-
+                  <p>
+                    <strong>PAN No: </strong>AALCA017E
+                  </p>
+                  <p>
+                    <strong>GST Registration No: </strong>AALCA017E
+                  </p>
                 </div>
-              
               </div>
             </div>
           </div>

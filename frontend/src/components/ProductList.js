@@ -10,6 +10,8 @@ import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import "../css/ProductList.css";
 import useFetch from "./hooks/useFetch"; // Correct import for useFetch hook
+import ConfirmationModal from "./reusable/ConfirmationModal"; // Import the modal component
+
 
 const ProductList = () => {
   const { products, dispatch } = useProductContext();
@@ -18,6 +20,7 @@ const ProductList = () => {
   const [selectedQuantity, setSelectedQuantity] = useState("All Products");
   const [addedProducts, setAddedProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false); // State for modal visibility
   const { user } = useAuthContext();
 
   useFetch(user, selectedType, selectedQuantity, dispatch); // Use the custom hook
@@ -94,6 +97,20 @@ const ProductList = () => {
   };
 
   const sortedProducts = products ? sortProducts(products) : [];
+
+  const handleDownloadClick = () => {
+    setIsModalOpen(true); // Open the confirmation modal
+  };
+  
+  const handleConfirmDownload = () => {
+    setIsModalOpen(false);
+    downloadPDF(); // Proceed with downloading the PDF
+  };
+  
+  const handleCancelDownload = () => {
+    setIsModalOpen(false); // Close the modal without downloading
+  };
+  
 
   const downloadPDF = () => {
     const input = document.getElementById("productTable");
@@ -292,14 +309,14 @@ const ProductList = () => {
         </div>
       </div>
       {/* Add download button */}
-      <div className="flex justify-center">
-        <div className="text-center my-4">
+      <div className="flex justify-end">
+        <div className="text-end my-4 mr-8">
           <p className="text-gray-500 text-sm font-semibold">
             Click here to download the table
           </p>
           <button
-            onClick={downloadPDF}
-            className="bg-sea hover:bg-hover1 text-white font-medium text-sm shadow-xl hover:shadow-lg py-2 px-4 rounded mt-3 mr- rounded focus:outline-none focus:shadow-outline"
+            onClick={handleDownloadClick}
+            className="mr-11 bg-sea hover:bg-hover1 text-white font-medium text-sm shadow-xl hover:shadow-lg py-2 px-4 rounded mt-3 mr- rounded focus:outline-none focus:shadow-outline"
           >
             Download
             <span>
@@ -308,6 +325,11 @@ const ProductList = () => {
           </button>
         </div>
       </div>
+      <ConfirmationModal
+      isOpen={isModalOpen}
+      onClose={handleCancelDownload}
+      onConfirm={handleConfirmDownload}
+    />
     </>
   );
 };
