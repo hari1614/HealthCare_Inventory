@@ -3,6 +3,7 @@ import { useProductContext } from "./hooks/useProductContext";
 import { useReactToPrint } from "react-to-print";
 import { taxDropdownOptions } from "./utils/utils";
 import { validateFormData } from "./utils/validation";
+import "../css/Billing.css"
 
 const Billing = () => {
   const { products } = useProductContext();
@@ -22,6 +23,7 @@ const Billing = () => {
     buyerName: "",
     sellerName: "",
     itemTaxRate: "", // New field for item-specific tax rate
+    itemTaxType: ""
   });
   const [searchTerm, setSearchTerm] = useState("");
   const [isOpen, setIsOpen] = useState(false);
@@ -108,6 +110,7 @@ const Billing = () => {
       taxAmount,
       totalAmountWithTax,
       unitAndKg: selectedProduct?.unitAndKg || "", // Add unitAndKg to invoice item
+      
     };
 
 
@@ -122,6 +125,8 @@ const Billing = () => {
       quantity: "",
       pricePerItem: "",
       itemTaxRate: "", // Reset item tax rate
+
+      // itemTaxType: "" // Reset item tax type
     });
   };
 
@@ -146,9 +151,17 @@ const Billing = () => {
     product.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const handlePrint = useReactToPrint({
-    content: () => invoiceRef.current,
-  });
+  
+
+  
+    const handlePrint = useReactToPrint({
+      content: () => invoiceRef.current,
+      onAfterPrint: () => console.log('Print complete')
+    })
+
+  // const handlePrint = useReactToPrint({
+  //   content: () => invoiceRef.current,
+  // });
 
   const options = taxDropdownOptions();
 
@@ -367,6 +380,23 @@ const Billing = () => {
           </div>
 
           <div className="mb-4">
+            <lable className="block text-sm font-medium text-gray-700">
+              Tax type
+            </lable>
+            <select
+             name="itemTaxType"
+             value={formData.itemTaxType}
+             onChange={handleInputChange}
+             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focusing:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+             required
+            >
+              <option value="Select a tax type">Select a tax type</option>
+              <option value="CGST & SGST">CGST & SGST</option>
+              <option vlaue="IGST">IGST</option>
+            </select>
+          </div>
+
+          <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700">
               Item Tax Rate
             </label>
@@ -374,7 +404,7 @@ const Billing = () => {
               name="itemTaxRate"
               value={formData.itemTaxRate}
               onChange={handleInputChange}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focusing:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               required
             >
               <option value="">Select Tax Rate</option>
@@ -395,7 +425,7 @@ const Billing = () => {
               name="totalWithTax"
               value={totalWithTax}
               readOnly
-              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-gray-100"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-gray-100"
             />
           </div>
         </div>
@@ -477,9 +507,9 @@ const Billing = () => {
               {/* Company Logo */}
 
               <div className="flex items-start justify-start">
-                <div className="text-start">
-                  <h1 className="text-lg font-bold text-gray-800">
-                    Tax Invoice/Bill of Supply/Cash Memo
+                <div className="text-start mb-8">
+                  <h1 className="text-2xl font-bold text-gray-800 ">
+                    Tax Invoice
                   </h1>
                   {/* <h1 className="text-lg font-bold text-gray-800">Invoice</h1> */}
                   <p className="text-gray-600">Invoice Number: #12345</p>
@@ -494,6 +524,7 @@ const Billing = () => {
                 </span>
                 {/* <span className="text-xs font-sm block text-title">Inventory Management Software</span> */}
               </span>
+              <p>FSS Number: #23465</p>
               {/* <p className="text-gray-600">
                 Date: {new Date().toLocaleDateString()}
               </p> */}
@@ -546,14 +577,14 @@ const Billing = () => {
                   <th className="py-2 px-4 border-b text-left text-sm md:text-base">
                     Serial No.
                   </th>{" "}
-                  {/* New column header for Serial Number */}
+        
                   <th className="py-2 px-4 border-b text-left text-sm md:text-base">
                     Item
                   </th>
                   <th className="py-2 px-4 border-b text-left text-sm md:text-base">
                     Type
                   </th>{" "}
-                  {/* New column header for Type */}
+              
                   <th className="py-2 px-4 border-b text-left text-sm md:text-base">
                     Quantity
                   </th>
@@ -569,11 +600,14 @@ const Billing = () => {
                   <th className="py-2 px-4 border-b text-left text-sm md:text-base">
                     Tax (%)
                   </th>{" "}
-                  {/* New column header for Tax */}
+                  {/* <th className="py-2 px-4 border-b text-left text-sm md:text-base">
+                    Tax type
+                  </th>{" "}
+              */}
                   <th className="py-2 px-4 border-b text-left text-sm md:text-base">
                     Tax Amount
                   </th>{" "}
-                  {/* New column header for Tax Amount */}
+            
                   <th className="py-2 px-4 border-b text-left text-sm md:text-base">
                     Total
                   </th>
@@ -583,12 +617,12 @@ const Billing = () => {
                 {invoiceItems.map((item, index) => (
                   <tr key={index} className="text-sm md:text-base">
                     <td className="py-2 px-4 border-b">{index + 1}</td>{" "}
-                    {/* Serial Number */}
+                  
                     <td className="py-2 px-4 border-b">{item.itemName}</td>
                     <td className="py-2 px-4 border-b">
                       {item.unitAndKg}
                     </td>{" "}
-                    {/* New column data for Type */}
+           
                     <td className="py-2 px-4 border-b">
                       {item.quantity} {item.category}
                     </td>
@@ -598,11 +632,14 @@ const Billing = () => {
                     <td className="py-2 px-4 border-b">
                       {item.itemTaxRate}%
                     </td>{" "}
-                    {/* New column data for Tax */}
+                    {/* <td className="py-2 px-4 border-b">
+                       {item.itemTaxType}
+                    </td>{" "} */}
+            
                     <td className="py-2 px-4 border-b">
                       ₹{item.taxAmount}
                     </td>{" "}
-                    {/* New column data for Tax Amount */}
+       
                     <td className="py-2 px-4 border-b">
                       ₹{item.totalAmountWithTax}
                     </td>{" "}
@@ -610,18 +647,29 @@ const Billing = () => {
                 ))}
               </tbody>
               <tfoot>
-                <tr>
+              <tr>
                   <td
-                    colSpan="3"
+                    colSpan="9"
                     className="py-2 px-4 border-t text-right font-bold"
                   >
-                    Tax ({taxPercentage}%)
+                    {/* Tax ({taxPercentage}%) */}
+                    Tax type
+                  </td>
+                  <td className="py-2 px-4 border-t">{formData.itemTaxType}</td>
+                </tr>
+                <tr>
+                  <td
+                    colSpan="9"
+                    className="py-2 px-4 border-t text-right font-bold"
+                  >
+                    {/* Tax ({taxPercentage}%) */}
+                    Total tax amount
                   </td>
                   <td className="py-2 px-4 border-t">₹{taxAmount}</td>
                 </tr>
                 <tr>
                   <td
-                    colSpan="3"
+                    colSpan="9"
                     className="py-2 px-4 border-t text-right font-bold"
                   >
                     Total with Tax

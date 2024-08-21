@@ -14,6 +14,7 @@ import UserProfile from "./pages/UserProfile";
 import Notifications from "./components/reusable/Notifications";
 import Forms from "./components/Forms";
 import Billing from "./components/Billing";
+import HealthCareInventoryOverview from "./pages/About";
 
 
 function App() {
@@ -29,17 +30,19 @@ function App() {
           <Navbar />
      
           <Routes>
-            <Route path="/" element={user ? <ProductList /> : <Navigate to="/login" /> } />
+            <Route path="/" element={user ? <ProductList /> : <Navigate to="/about" /> } />
             <Route path="/products" element={user ? <FetchData /> : <Navigate to="/login" />} />
             <Route path="/login" element={!user ? <LoginForm /> : <Navigate to="/" /> } />
             <Route path="/forms" element={user ? <Forms /> : <Navigate to="/login" /> }/>
             <Route path="/addusers" element={user ? <AddUsers />  : <Navigate to="/" />  } />
-            <Route path="/notification" element={user ? <Notifications  /> : <Navigate to="/" />  }   />
+            <Route path="/notification" element={user ? <Notifications  /> : <Navigate to="/login" />  }   />
             <Route path="/error" element={<Error />} />
             <Route path="/login/admin" element={<LoginAdmin />} />
             <Route path="/create/admin" element={<CreateAdmin/>}/>
             <Route path="/profile"element={user ? <UserProfile /> : <Navigate to="/login" /> }/>
-            <Route path="/billing" element={<Billing/>}/>
+            <Route path="/billing" element={user ? <Billing/> : <Navigate to="/login" /> }/>
+            <Route path="/about" element={!user? <HealthCareInventoryOverview/> : <Navigate to="/" /> } />
+            
           </Routes>
           <Footer />
         </Router>

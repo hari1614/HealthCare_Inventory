@@ -1,22 +1,19 @@
 import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useLogout } from "./hooks/useLogout";
 import { useAuthContext } from "./hooks/useAuthContext";
 import { useProductContext } from "./hooks/useProductContext";
 import useFetch from "./hooks/useFetch";
 import LowStockAlert from "./reusable/LowStockAlert";
-import Rks from "../assets/rkshealthcare.png";
+import LogoutDialog from "./reusable/LogoutDialog";
 import {
   faBars,
   faTimes,
-  faHeartbeat,
   faUser,
   faPlus,
   faArrowRightFromBracket,
-  faGears,
 } from "@fortawesome/free-solid-svg-icons";
-import { Link, useNavigate } from "react-router-dom";
-import LogoutDialog from "./reusable/LogoutDialog"; // Import the new LogoutDialog component
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -25,6 +22,7 @@ const Navbar = () => {
   const [logoutSuccess, setLogoutSuccess] = useState(false); // State for logout success message
   const [lowStockCount, setLowStockCount] = useState(0);
   const [showNotification, setShowNotification] = useState(false); // State for showing the custom notification
+  const [isSidebarOpen, setSidebarOpen] = useState(false);
   const { logout } = useLogout();
   const { user } = useAuthContext();
   const { products, dispatch } = useProductContext();
@@ -56,6 +54,7 @@ const Navbar = () => {
 
   const handleClick = () => {
     setIsNavDialogOpen(!isNavDialogOpen);
+    setSidebarOpen(!isSidebarOpen);
   };
 
   const closeNavDialog = () => {
@@ -81,6 +80,8 @@ const Navbar = () => {
     navigate("/");
   };
 
+  const closeSidebar = () => setSidebarOpen(false);
+
   return (
     <>
       <nav className="sticky top-0 z-50 p-3 flex bg-white justify-between items-center shadow-md">
@@ -89,32 +90,26 @@ const Navbar = () => {
           id="brand"
           className="flex gap-2 items-center mx-auto md:mx-0"
         >
-          {/* <span className="object-cover max-w-12 max-h-12">
-            <FontAwesomeIcon className="text-medium" icon={faHeartbeat} />
-          </span> */}
-
           <span className="text-lg font-bold font-body text-title2">
             RKS
             <span className="ml-2 font-bold font-body text-title">
               HealthCare
             </span>
-            {/* <span className="text-xs font-sm block text-title">Inventory Management Software</span> */}
           </span>
-          {/* <img
-            src={Rks}
-            alt={Rks}
-            className="block mx-auto object-cover w-44 max-h-12 sm:w-44 md:w-44"
-          /> */}
         </a>
 
         <div id="nav-menu" className="hidden md:flex gap-12">
-          <Link
-            to="/"
-            className="text-gray-700 transition hover:text-sea focus:outline-none focus:ring-sea focus:ring-offset-2 transition duration-300 ease-in-out transform hover:scale-105"
-          >
-            Home
-          </Link>
-          {!user?.subAdmin && (
+          {user && (
+            <Link
+              to="/"
+              className="text-gray-700 transition hover:text-sea focus:outline-none focus:ring-sea focus:ring-offset-2 transition duration-300 ease-in-out transform hover:scale-105"
+            >
+              Home
+            </Link>
+          )}
+
+          {user && !user?.subAdmin && (
+            
             <Link
               to="/forms"
               className="text-gray-700 transition hover:text-sea focus:outline-none  focus:ring-sea focus:ring-offset-2 transition duration-300 ease-in-out transform hover:scale-105"
@@ -122,31 +117,31 @@ const Navbar = () => {
               Add new product
             </Link>
           )}
+          {user && (
+            <Link
+              to="notification"
+              className="text-gray-700 transition hover:text-sea focus:outline-none  focus:ring-sea focus:ring-offset-2 transition duration-300 ease-in-out transform hover:scale-105"
+            >
+              Notification
+              {/* Add the lowStockCount badge */}
+              {user && lowStockCount > 0 && (
+                <span className="inline-flex items-center justify-center w-5 h-5 ms-2 text-xs font-semibold text-white bg-sea rounded-full">
+                  {lowStockCount}
+                </span>
+              )}
+            </Link>
+          )}
+          {user && (
+              <Link
+              to="/billing"
+              className="text-gray-700 transition hover:text-sea focus:outline-none  focus:ring-sea focus:ring-offset-2 transition duration-300 ease-in-out transform hover:scale-105"
+            >
+              {" "}
+              Billing
+            </Link>
 
-          {/* <Link
-            to="/products"
-            className="text-gray-700 transition hover:text-sea focus:outline-none  focus:ring-sea focus:ring-offset-2 transition duration-300 ease-in-out transform hover:scale-105"
-          >
-            Products
-          </Link> */}
-          <Link
-            to="notification"
-            className="text-gray-700 transition hover:text-sea focus:outline-none  focus:ring-sea focus:ring-offset-2 transition duration-300 ease-in-out transform hover:scale-105"
-          >
-            Notification
-            {/* Add the lowStockCount badge */}
-            {user && lowStockCount > 0 && (
-              <span className="inline-flex items-center justify-center w-5 h-5 ms-2 text-xs font-semibold text-white bg-sea rounded-full">
-                {lowStockCount}
-              </span>
-            )}
-          </Link>
-          <Link
-            to="/billing"
-            className="text-gray-700 transition hover:text-sea focus:outline-none  focus:ring-sea focus:ring-offset-2 transition duration-300 ease-in-out transform hover:scale-105"
-          > Billing
-            
-          </Link>
+          )}
+
 
           {user && (
             <div className=" flex items-end text-xs text-gray-600 font-semibold">
@@ -154,7 +149,7 @@ const Navbar = () => {
                 Welcome, {user ? user.name : "Guest"}!
               </h1>
               {user.admin ? (
-                <p>You have Admin access.</p>
+                <p>You have Super Admin access.</p>
               ) : user.subAdmin ? (
                 <p>You have Sub Admin access.</p>
               ) : (
@@ -217,102 +212,110 @@ const Navbar = () => {
             </div>
           )}
         </div>
-        {/*navbar for small screens*/}
+
         <button className="p-2 md:hidden" onClick={handleClick}>
-          <FontAwesomeIcon icon={isNavDialogOpen ? faTimes : faBars} />
+          <FontAwesomeIcon icon={isSidebarOpen ? faTimes : faBars} />
         </button>
-        {isNavDialogOpen && (
-          <div
-            id="nav-dialog"
-            className="fixed bg-white inset-0 p-3"
-            style={{ zIndex: 1000 }}
-          >
-            <div id="nav-bar" className="flex justify-between">
-              <a href="#" id="brand" className="flex gap-2 items center">
-                <img
-                  src={Rks}
-                  alt={Rks}
-                  className="block mx-auto object-cover w-44 max-h-12 sm:w-44 md:w-44"
-                />
-              </a>
-              <button className="p-2 md:hidden" onClick={handleClick}>
-                <FontAwesomeIcon icon={isNavDialogOpen ? faTimes : faBars} />
-              </button>
-            </div>
 
-            <div className="mt-6">
-              <Link
-                to="/"
-                className="font-medium m-3 p-3 hover:bg-gray-50 block rounded-lg"
-                onClick={closeNavDialog}
-              >
-                Home
-              </Link>
-              <Link
-                to="/forms"
-                className="font-medium m-3 p-3 hover:bg-gray-50 block rounded-lg"
-                onClick={closeNavDialog}
-              >
-                Add new product
-              </Link>
-              <Link
-                to="/products"
-                className="font-medium m-3 p-3 hover:bg-gray-50 block rounded-lg"
-                onClick={closeNavDialog}
-              >
-                Products
-              </Link>
-              <Link
-                to="/notification"
-                className="font-medium m-3 p-3 hover:bg-gray-50 block rounded-lg"
-                onClick={closeNavDialog}
-              >
-                Notifications
-              </Link>
-            </div>
-
-            <div className="h-[1px] bg-gray-300"></div>
-
-            {user?.admin && (
-              <Link
-                to="/addusers"
-                className="bg-sea hover:bg-hover1 text-white font-medium text-sm shadow-xl hover:shadow-lg py-2 px-4 rounded focus:outline-none focus:shadow-outline flex items-center m-8 w-20"
-                onClick={closeNavDialog}
-              >
-                Add
-              </Link>
-            )}
-            {user && (
-              <Link
-                to="/profile"
-                className="bg-sea hover:bg-hover1 text-white font-medium text-sm shadow-xl hover:shadow-lg py-2 px-4 rounded focus:outline-none focus:shadow-outline flex items-center m-8 w-20"
-                onClick={closeNavDialog}
-              >
-                Profile
-              </Link>
-            )}
-            {!user && (
-              <Link
-                to="/login"
-                className="bg-sea hover:bg-hover1 text-white font-medium text-sm shadow-xl hover:shadow-lg py-2 px-4 rounded focus:outline-none focus:shadow-outline flex items-center m-8 w-20"
-                onClick={closeNavDialog}
-              >
-                Login
-              </Link>
-            )}
-            {user && (
-              <Link
-                to="/login"
-                className="bg-gray-500 hover:bg-gray-600 text-white font-medium text-sm shadow-xl hover:shadow-lg py-2 px-4 rounded focus:outline-none focus:shadow-outline flex items-center m-8 w-20"
-                onClick={openLogoutDialog}
-              >
-                Logout 
-              </Link>
-            )}
+        {/* Sidebar for small screens */}
+        <div
+          className={`fixed inset-0 bg-white transition-transform transform ${
+            isSidebarOpen ? "translate-x-0" : "translate-x-full"
+          } p-3 z-50`}
+          style={{ boxShadow: "0 2px 4px rgba(0,0,0,0.1)" }}
+        >
+          <div className="shadow-md flex justify-between items-center mb-6">
+            <a href="#" className="flex gap-2 items-center mx-auto md:mx-0">
+              <span className="text-lg font-bold font-body text-title2">
+                RKS
+                <span className="ml-2 font-bold font-body text-title">
+                  HealthCare
+                </span>
+              </span>
+            </a>
+            <button className="p-2" onClick={handleClick}>
+              <FontAwesomeIcon icon={faTimes} />
+            </button>
           </div>
-        )}
+
+          <div className="space-y-4">
+            <Link
+              to="/"
+              className="font-medium block p-3 hover:bg-gray-50 rounded-lg"
+              onClick={closeSidebar}
+            >
+              Home
+            </Link>
+            <Link
+              to="/forms"
+              className="font-medium block p-3 hover:bg-gray-50 rounded-lg"
+              onClick={closeSidebar}
+            >
+              Add new product
+            </Link>
+            <Link
+              to="/products"
+              className="font-medium block p-3 hover:bg-gray-50 rounded-lg"
+              onClick={closeSidebar}
+            >
+              Products
+            </Link>
+            <Link
+              to="/notification"
+              className="font-medium block p-3 hover:bg-gray-50 rounded-lg"
+              onClick={closeSidebar}
+            >
+              Notifications
+            </Link>
+            <Link
+              to="/billing"
+              className="font-medium block p-3 hover:bg-gray-50 rounded-lg"
+              onClick={closeSidebar}
+            >
+              Billing
+            </Link>
+          </div>
+
+          <div className="border-t border-gray-300 mt-6"></div>
+
+          {user?.admin && (
+            <Link
+              to="/addusers"
+              className="bg-sea hover:bg-hover1 text-white font-medium text-sm shadow-xl hover:shadow-lg py-2 px-4 rounded block text-center mt-4"
+              onClick={closeSidebar}
+            >
+              Add
+            </Link>
+          )}
+          {user && (
+            <Link
+              to="/profile"
+              className="bg-sea hover:bg-hover1 text-white font-medium text-sm shadow-xl hover:shadow-lg py-2 px-4 rounded block text-center mt-4"
+              onClick={closeSidebar}
+            >
+              Profile
+            </Link>
+          )}
+          {!user && (
+            <Link
+              to="/login"
+              className="bg-sea hover:bg-hover1 text-white font-medium text-sm shadow-xl hover:shadow-lg py-2 px-4 rounded block text-center mt-4"
+              onClick={closeSidebar}
+            >
+              Login
+            </Link>
+          )}
+          {user && (
+            <Link
+              to="/login"
+              className="bg-gray-500 hover:bg-gray-600 text-white font-medium text-sm shadow-xl hover:shadow-lg py-2 px-4 rounded block text-center mt-4"
+              onClick={openLogoutDialog}
+            >
+              Logout
+            </Link>
+          )}
+        </div>
       </nav>
-      {/* <div className="h-[1px] bg-gray-300"></div> */}
 
       {/* Logout Confirmation Dialog */}
       <LogoutDialog

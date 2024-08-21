@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Table from "./Table";
-import { getUnitAndKgOptionsTwo } from "./utils/utils";
+import { getUnitAndKgOptions } from "./utils/utils";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass, faDownload,} from "@fortawesome/free-solid-svg-icons";
 import { useProductContext } from "./hooks/useProductContext";
@@ -54,7 +54,7 @@ const ProductList = () => {
     setSelectedQuantity(event.target.value);
   };
 
-  const filteredUnitOptions = getUnitAndKgOptionsTwo(selectedType);
+  const filteredUnitOptions = getUnitAndKgOptions(selectedType);
 
   const handleAddButtonClick = () => {
     if (products) {
@@ -309,14 +309,14 @@ const ProductList = () => {
         </div>
       </div>
       {/* Add download button */}
-      <div className="flex justify-end">
-        <div className="text-end my-4 mr-8">
+      <div className="flex justify-center">
+        <div className="text-center my-4">
           <p className="text-gray-500 text-sm font-semibold">
             Click here to download the table
           </p>
           <button
             onClick={handleDownloadClick}
-            className="mr-11 bg-sea hover:bg-hover1 text-white font-medium text-sm shadow-xl hover:shadow-lg py-2 px-4 rounded mt-3 mr- rounded focus:outline-none focus:shadow-outline"
+            className="bg-sea hover:bg-hover1 text-white font-medium text-sm shadow-xl hover:shadow-lg py-2 px-4 rounded mt-3 mr- rounded focus:outline-none focus:shadow-outline"
           >
             Download
             <span>
