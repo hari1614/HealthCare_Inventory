@@ -7,7 +7,8 @@ const cors = require("cors");
 const productRoutes = require("./routes/products");
 const tabletRoutes = require("./routes/productTablets");
 const powderRoutes = require("./routes/productPowders");
-const userRoutes = require("./routes/user")
+const purchaseRoutes = require("./routes/purchase");
+const userRoutes = require("./routes/user");
 
 //express app
 const app = express();
@@ -25,7 +26,8 @@ app.use((req, res, next) => {
 app.use("/api/capsules", productRoutes);
 app.use("/api/tablets", tabletRoutes);
 app.use("/api/powders", powderRoutes);
-app.use("/api/user", userRoutes)
+app.use("/api/purchase", purchaseRoutes);
+app.use("/api/user", userRoutes);
 // app.use('/api/tablets',productRoutes)
 // app.use('/api/powders',productRoutes)
 
@@ -35,7 +37,7 @@ mongoose
   .then(() => {
     //listen for requests
     app.listen(process.env.PORT, () => {
-      console.log('connected to db & listenening on port', process.env.PORT);
+      console.log("connected to db & listenening on port", process.env.PORT);
     });
   })
   .catch((error) => {
