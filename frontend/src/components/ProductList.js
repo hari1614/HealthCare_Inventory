@@ -1,17 +1,19 @@
 import React, { useState, useEffect } from "react";
-import Table from "./Table";
 import { getUnitAndKgOptions } from "./utils/utils";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMagnifyingGlass, faDownload,} from "@fortawesome/free-solid-svg-icons";
+import {
+  faMagnifyingGlass,
+  faDownload,
+} from "@fortawesome/free-solid-svg-icons";
 import { useProductContext } from "./hooks/useProductContext";
-import Tooltip from "./reusable/Tooltip";
 import { useAuthContext } from "./hooks/useAuthContext";
+import Table from "./Table";
+import Tooltip from "./reusable/Tooltip";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
+import useFetch from "./hooks/useFetch";
+import ConfirmationModal from "./reusable/ConfirmationModal";
 import "../css/ProductList.css";
-import useFetch from "./hooks/useFetch"; // Correct import for useFetch hook
-import ConfirmationModal from "./reusable/ConfirmationModal"; // Import the modal component
-
 
 const ProductList = () => {
   const { products, dispatch } = useProductContext();
@@ -20,7 +22,8 @@ const ProductList = () => {
   const [selectedQuantity, setSelectedQuantity] = useState("All Products");
   const [addedProducts, setAddedProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [isModalOpen, setIsModalOpen] = useState(false); // State for modal visibility
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isButtonVisible, setButtonVisible] = useState(false);
   const { user } = useAuthContext();
 
   useFetch(user, selectedType, selectedQuantity, dispatch); // Use the custom hook
@@ -101,16 +104,15 @@ const ProductList = () => {
   const handleDownloadClick = () => {
     setIsModalOpen(true); // Open the confirmation modal
   };
-  
+
   const handleConfirmDownload = () => {
     setIsModalOpen(false);
     downloadPDF(); // Proceed with downloading the PDF
   };
-  
+
   const handleCancelDownload = () => {
     setIsModalOpen(false); // Close the modal without downloading
   };
-  
 
   const downloadPDF = () => {
     const input = document.getElementById("productTable");
@@ -151,11 +153,14 @@ const ProductList = () => {
       });
   };
 
+  const handleClickDown = () => {
+    setButtonVisible(true);
+  };
+
   return (
     <>
       {/* <Forms /> */}
-      <div className="mt-4 flex justify-center items-center gap-2">
-      </div>
+      <div className="mt-4 flex justify-center items-center gap-2"></div>
       <form className="max-w-full mx-auto p-4">
         <div className="flex flex-col sm:flex-row sm:justify-center sm:gap-4">
           <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-8 mt-2">
@@ -168,14 +173,34 @@ const ProductList = () => {
             <Tooltip text="Filter by categories" position="top">
               <select
                 id="types"
-                className="w-32 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                className="text-gray-600 text-sm font-semibold w-32 bg-gray-50 border border-gray-300  text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 onChange={handleTypeChange}
                 value={selectedType}
               >
-                <option value="All Products">All Products</option>
-                <option value="Capsules">Capsules</option>
-                <option value="Tablets">Tablets</option>
-                <option value="Powders">Powders</option>
+                <option
+                  className="text-gray-600 text-sm font-semibold"
+                  value="All Products"
+                >
+                  All Products
+                </option>
+                <option
+                  className="text-gray-600 text-sm font-semibold"
+                  value="Capsules"
+                >
+                  Capsules
+                </option>
+                <option
+                  className="text-gray-600 text-sm font-semibold"
+                  value="Tablets"
+                >
+                  Tablets
+                </option>
+                <option
+                  className="text-gray-600 text-sm font-semibold"
+                  value="Powders"
+                >
+                  Powders
+                </option>
               </select>
             </Tooltip>
 
@@ -189,13 +214,22 @@ const ProductList = () => {
             <Tooltip text="Filter by type" position="top">
               <select
                 id="types"
-                className="w-32 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                className="text-gray-600 text-sm font-semibold w-32 bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 onChange={handleQuantityChange} // Attach the new quantity change handler
                 value={selectedQuantity}
               >
-                <option value="All Products">All Quantities</option>
+                <option
+                  className="text-gray-600 text-gray-600 text-sm font-semibold"
+                  value="All Products"
+                >
+                  All Quantities
+                </option>
                 {filteredUnitOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
+                  <option
+                    className="text-gray-600 text-sm font-semibold"
+                    key={option.value}
+                    value={option.value}
+                  >
                     {option.label}
                   </option>
                 ))}
@@ -251,7 +285,7 @@ const ProductList = () => {
                 <th className="px-4 py-3 bg-sea sm:px-8 md:py-4 lg:py-3">
                   Stock
                 </th>
-                
+
                 <th className="px-4 py-3 bg-sea sm:px-8 md:py-4 lg:py-3">
                   MRP
                 </th>
@@ -311,25 +345,30 @@ const ProductList = () => {
       {/* Add download button */}
       <div className="flex justify-center">
         <div className="text-center my-4">
-          <p className="text-gray-500 text-sm font-semibold">
+          <p
+            className="text-gray-500 text-sm font-semibold"
+            onClick={handleClickDown}
+          >
             Click here to download the table
           </p>
-          <button
-            onClick={handleDownloadClick}
-            className="bg-sea hover:bg-hover1 text-white font-medium text-sm shadow-xl hover:shadow-lg py-2 px-4 rounded mt-3 mr- rounded focus:outline-none focus:shadow-outline"
-          >
-            Download
-            <span>
-              <FontAwesomeIcon className="ml-2" icon={faDownload} />
-            </span>
-          </button>
+          {isButtonVisible && (
+            <button
+              onClick={handleDownloadClick}
+              className="bg-sea hover:bg-hover1 text-white font-medium text-sm shadow-xl hover:shadow-lg py-2 px-4 rounded mt-3 mr- rounded focus:outline-none focus:shadow-outline"
+            >
+              Download
+              <span>
+                <FontAwesomeIcon className="ml-2" icon={faDownload} />
+              </span>
+            </button>
+          )}
         </div>
       </div>
       <ConfirmationModal
-      isOpen={isModalOpen}
-      onClose={handleCancelDownload}
-      onConfirm={handleConfirmDownload}
-    />
+        isOpen={isModalOpen}
+        onClose={handleCancelDownload}
+        onConfirm={handleConfirmDownload}
+      />
     </>
   );
 };

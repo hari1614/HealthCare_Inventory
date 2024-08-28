@@ -97,6 +97,7 @@ const Notifications = () => {
 
   return (
     <div className="p-6 max-w-4xl mx-auto bg-gray-50 rounded-lg shadow-md">
+      
       <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">Stock Alerts</h2>
 
       {/* Render General Low Stock Alerts */}

@@ -1,22 +1,32 @@
 /* @media print {
-    .invoice-container {
-      padding: 0;
-      margin: 0;
-      width: 100%;
-      overflow: visible;
-    }
-    table {
-      width: 100%;
-      page-break-inside: auto;
-      margin: 0;
-    }
-    th, td {
-      page-break-inside: avoid;
-    }
-    thead {
-      display: table-header-group;
-    }
-    @page {
-      margin: 0mm;
-    }
-  } */
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  border: 1px solid rgb(203, 213, 225); 
+  padding: 4px; 
+}
+
+tfoot td {
+  border-bottom: 1px solid rgb(203, 213, 225 ); 
+  border-top: none; 
+  border-left: none; 
+  border-right: none; 
+}
+
+
+thead {
+  display: table-header-group; 
+}
+
+@page {
+  margin: 0mm; 
+}
+}
+
+
+
+
+ */

@@ -173,7 +173,7 @@ const Table = ({
 
   return (
     <>
-      <tr className="bg-sea text-white-500 border-b border-blue-400">
+      <tr className="bg-sea hover:bg-hover1 text-white-500 border-b border-blue-400">
         <td className="px-4 py-2 whitespace-nowrap text-transform: capitalize font-medium text-sm text-black-40 whitespace-wrap dark:text-blue-100 sm:px-8 md:py-6 lg:py-4">
           {isEditing ? (
             <input

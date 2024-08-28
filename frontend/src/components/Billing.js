@@ -1,9 +1,9 @@
 import React, { useState, useRef } from "react";
 import { useProductContext } from "./hooks/useProductContext";
 import { useReactToPrint } from "react-to-print";
-import { taxDropdownOptions } from "./utils/utils";
+import { taxDropdownOptions, stateDropdownOptions } from "./utils/utils";
 import { validateFormData } from "./utils/validation";
-import "../css/Billing.css"
+import "../css/Billing.css";
 
 const Billing = () => {
   const { products } = useProductContext();
@@ -23,7 +23,9 @@ const Billing = () => {
     buyerName: "",
     sellerName: "",
     itemTaxRate: "", // New field for item-specific tax rate
-    itemTaxType: ""
+    itemTaxType: "",
+    gstCode:"",
+    state:"",
   });
   const [searchTerm, setSearchTerm] = useState("");
   const [isOpen, setIsOpen] = useState(false);
@@ -35,23 +37,107 @@ const Billing = () => {
   const [errors, setErrors] = useState({}); // State to hold validation errors
   const [existingHSNCodes, setExistingHSNCodes] = useState([]); // List of existing HSN codes
   const invoiceRef = useRef();
+//OLD WITHOUT CGST, SGST, IGST 
+  // const handleInputChange = (e) => {
+  //   const { name, value } = e.target;
+  //   const updatedFormData = { ...formData, [name]: value };
 
+  //   if ((name === "mrp" || name === "pricePerItem") && !isManualDiscount) {
+  //     // Auto-calculate discount only if the user hasn't manually changed it
+  //     const discount = updatedFormData.mrp - updatedFormData.pricePerItem;
+  //     updatedFormData.discount = discount > 0 ? discount : 0;
+  //   }
+
+  //   if (name === "discount") {
+  //     setIsManualDiscount(true); // Mark that the discount is manually changed
+  //   }
+
+  //   setFormData(updatedFormData);
+  // };
+
+  //WORKING JUST DROPDOWN
+  // const handleInputChange = (e) => {
+  //   const { name, value } = e.target;
+  //   const updatedFormData = { ...formData, [name]: value };
+
+  //   if ((name === "mrp" || name === "pricePerItem") && !isManualDiscount) {
+  //     // Auto-calculate discount only if the user hasn't manually changed it
+  //     const discount = updatedFormData.mrp - updatedFormData.pricePerItem;
+  //     updatedFormData.discount = discount > 0 ? discount : 0;
+  //   }
+
+  //   if (name === "discount") {
+  //     setIsManualDiscount(true); // Mark that the discount is manually changed
+  //   }
+
+  //   if (name === "gstCode") {
+  //     // Update itemTaxType based on gstCode
+  //     if (value === "33") {
+  //       updatedFormData.itemTaxType = `CGST ${formData.itemTaxRate}, SGST ${formData.itemTaxRate}`;
+  //     } else {
+  //       updatedFormData.itemTaxType = `IGST ${formData.itemTaxRate}`;
+  //     }
+  //   }
+
+  //   setFormData(updatedFormData);
+  // };
+
+  // //New input
+  // const handleInputChange = (e) => {
+  //   const { name, value } = e.target;
+  //   const updatedFormData = { ...formData, [name]: value };
+
+  //   if ((name === "mrp" || name === "pricePerItem") && !isManualDiscount) {
+  //     // Auto-calculate discount only if the user hasn't manually changed it
+  //     const discount = updatedFormData.mrp - updatedFormData.pricePerItem;
+  //     updatedFormData.discount = discount > 0 ? discount : 0;
+  //   }
+
+  //   if (name === "discount") {
+  //     setIsManualDiscount(true); // Mark that the discount is manually changed
+  //   }
+
+  //   if (name === "gstCode") {
+  //     // Extract the first two characters to determine the tax type
+  //     const firstTwoChars = value.slice(0, 2);
+
+  //     if (firstTwoChars === "34") {
+  //       updatedFormData.itemTaxType = `CGST ${formData.itemTaxRate}, SGST ${formData.itemTaxRate}`;
+  //     } else {
+  //       updatedFormData.itemTaxType = `IGST ${formData.itemTaxRate}`;
+  //     }
+  //   }
+
+  //   setFormData(updatedFormData);
+  // };
+
+  //WITH STATE 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     const updatedFormData = { ...formData, [name]: value };
-
+  
     if ((name === "mrp" || name === "pricePerItem") && !isManualDiscount) {
       // Auto-calculate discount only if the user hasn't manually changed it
       const discount = updatedFormData.mrp - updatedFormData.pricePerItem;
       updatedFormData.discount = discount > 0 ? discount : 0;
     }
-
+  
+    if (name === "state") {
+      // Determine the tax type based on the selected state
+      if (value === "Tamil Nadu" || value === "Puducherry") {
+        updatedFormData.itemTaxType = `CGST ${formData.itemTaxRate}%, SGST ${formData.itemTaxRate}%`;
+      } else {
+        updatedFormData.itemTaxType = `IGST ${formData.itemTaxRate}`;
+      }
+    }
+  
     if (name === "discount") {
       setIsManualDiscount(true); // Mark that the discount is manually changed
     }
-
+  
     setFormData(updatedFormData);
   };
+  
 
   const handleTransactionTypeChange = (e) => {
     setFormData({
@@ -110,9 +196,7 @@ const Billing = () => {
       taxAmount,
       totalAmountWithTax,
       unitAndKg: selectedProduct?.unitAndKg || "", // Add unitAndKg to invoice item
-      
     };
-
 
     const updatedItems = [...invoiceItems, newItem];
     setExistingHSNCodes([...existingHSNCodes, formData.hsnCode]);
@@ -124,7 +208,7 @@ const Billing = () => {
       itemName: "",
       quantity: "",
       pricePerItem: "",
-      itemTaxRate: "", // Reset item tax rate
+      // itemTaxRate: "", // Reset item tax rate
 
       // itemTaxType: "" // Reset item tax type
     });
@@ -151,19 +235,17 @@ const Billing = () => {
     product.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  
-
-  
-    const handlePrint = useReactToPrint({
-      content: () => invoiceRef.current,
-      onAfterPrint: () => console.log('Print complete')
-    })
+  const handlePrint = useReactToPrint({
+    content: () => invoiceRef.current,
+    onAfterPrint: () => console.log("Print complete"),
+  });
 
   // const handlePrint = useReactToPrint({
   //   content: () => invoiceRef.current,
   // });
 
   const options = taxDropdownOptions();
+  const stateOptions = stateDropdownOptions()
 
   function calculateTax(price, taxRate) {
     return ((price * taxRate) / 100).toFixed(2);
@@ -224,7 +306,7 @@ const Billing = () => {
           <div className="relative">
             <div
               onClick={() => setIsOpen(!isOpen)}
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg cursor-pointer focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 h-10 flex items-center justify-between"
+              className="text-gray-600 text-sm font-semibold bg-gray-50 border border-gray-300 text-sm rounded-lg cursor-pointer focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 h-10 flex items-center justify-between"
             >
               {selectedProductId
                 ? products.find((product) => product._id === selectedProductId)
@@ -246,7 +328,7 @@ const Billing = () => {
                       <li
                         key={product._id}
                         onClick={() => handleProductChange(product._id)}
-                        className="cursor-pointer p-2 hover:bg-gray-100"
+                        className="text-gray-600 text-sm font-semibold cursor-pointer p-2 hover:bg-gray-300"
                       >
                         {product.name} {product.unitAndKg}
                       </li>
@@ -269,11 +351,11 @@ const Billing = () => {
               name="itemName"
               value={formData.itemName}
               onChange={handleInputChange}
-              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              className="text-gray-600 text-sm font-semibold mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               required
             />
           </div>
-          <div>
+          {/* <div>
             <label className="block text-sm font-medium text-gray-700">
               HSN code
             </label>
@@ -282,13 +364,13 @@ const Billing = () => {
               name="hsnCode"
               value={formData.hsnCode}
               onChange={handleInputChange}
-              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              className="text-gray-600 text-sm font-semibold mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               required
             />
             {errors.hsnCode && (
               <p className="text-red-500 text-xs">{errors.hsnCode}</p>
             )}
-          </div>
+          </div> */}
 
           <div>
             <label className="block text-sm font-medium text-gray-700">
@@ -299,7 +381,7 @@ const Billing = () => {
               name="quantity"
               value={formData.quantity}
               onChange={handleInputChange}
-              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              className="text-gray-600 text-sm font-semibold mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               required
             />
             {errors.quantity && (
@@ -314,12 +396,21 @@ const Billing = () => {
               name="category"
               value={formData.category}
               onChange={handleInputChange}
-              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              className="text-gray-600 text-sm font-semibold mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               required
             >
-              <option>NOS</option>
-              <option>KG</option>
-              <option>GRAMS</option>
+              <option className="text-gray-600 text-sm font-semibold">
+                Select a category
+              </option>
+              <option className="text-gray-600 text-sm font-semibold">
+                NOS
+              </option>
+              <option className="text-gray-600 text-sm font-semibold">
+                GRAMS
+              </option>
+              <option className="text-gray-600 text-sm font-semibold">
+                KG
+              </option>
             </select>
           </div>
           <div>
@@ -331,7 +422,7 @@ const Billing = () => {
               name="mrp"
               value={formData.mrp}
               onChange={handleInputChange}
-              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              className="text-gray-600 text-sm font-semibold mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               required
             />
             {errors.mrp && <p className="text-red-500 text-xs">{errors.mrp}</p>}
@@ -346,7 +437,7 @@ const Billing = () => {
               name="pricePerItem"
               value={formData.pricePerItem}
               onChange={handleInputChange}
-              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              className="text-gray-600 text-sm font-semibold mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               required
             />
             {errors.pricePerItem && (
@@ -363,7 +454,7 @@ const Billing = () => {
               name="discount"
               value={formData.discount}
               onChange={handleInputChange}
-              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              className="text-gray-600 text-sm font-semibold mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               required
             />
           </div>
@@ -379,23 +470,38 @@ const Billing = () => {
             </button>
           </div>
 
-          <div className="mb-4">
+          {/* <div className="mb-4">
             <lable className="block text-sm font-medium text-gray-700">
-              Tax type
+              GST Code
             </lable>
             <select
-             name="itemTaxType"
-             value={formData.itemTaxType}
-             onChange={handleInputChange}
-             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focusing:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-             required
+              name="gstCode"
+              value={formData.gstCode}
+              onChange={handleInputChange}
+              className="text-gray-600 text-sm font-semibold mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focusing:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              required
             >
-              <option value="Select a tax type">Select a tax type</option>
-              <option value="CGST & SGST">CGST & SGST</option>
-              <option vlaue="IGST">IGST</option>
+              <option
+                className="text-gray-600 text-sm font-semibold"
+                value="Select a tax type"
+              >
+                  GST Code
+              </option>
+              <option
+                className="text-gray-600 text-sm font-semibold"
+                value="33"
+              >
+          
+                33
+              </option>
+              <option
+                className="text-gray-600 text-sm font-semibold"
+                value="32"
+              >
+                32     
+              </option>
             </select>
-          </div>
-
+          </div> */}
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700">
               Item Tax Rate
@@ -404,15 +510,97 @@ const Billing = () => {
               name="itemTaxRate"
               value={formData.itemTaxRate}
               onChange={handleInputChange}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focusing:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              className="text-gray-600 text-sm font-semibold mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focusing:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               required
             >
-              <option value="">Select Tax Rate</option>
+              <option className="text-gray-600 text-sm font-semibold" value="">
+                Select Tax Rate
+              </option>
               {options.map((option) => (
-                <option key={option.value} value={option.value}>
+                <option
+                  className="text-gray-600 text-sm font-semibold"
+                  key={option.value}
+                  value={option.value}
+                >
                   {option.label}
                 </option>
               ))}
+            </select>
+          </div>
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700">
+              State
+            </label>
+            <select
+              name="state"
+              value={formData.state}
+              onChange={handleInputChange}
+              className="text-gray-600 text-sm font-semibold mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focusing:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              required
+            >
+              <option className="text-gray-600 text-sm font-semibold" value="">
+                Select a state
+              </option>
+              {stateOptions.map((option) => (
+                <option
+                  className="text-gray-600 text-sm font-semibold"
+                  key={option.value}
+                  value={option.value}
+                >
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </div>
+          {/* <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700">
+              GST Number <span className="text-sm font-md text-sea">Click here to validate GSTN Number</span>
+            </label>
+            <input
+              type="text"
+              name="gstCode"
+              value={formData.gstCode}
+              onChange={handleInputChange}
+              className="text-gray-600 text-sm font-semibold mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focusing:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              
+            />
+              {errors.gstCode && (
+              <p className="text-red-500 text-xs">{errors.gstCode}</p>
+            )}
+          </div> */}
+
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700">
+              Tax type
+            </label>
+            <select
+              name="itemTaxType"
+              value={formData.itemTaxType}
+              onChange={handleInputChange}
+              disabled
+              className="text-gray-600 text-sm font-semibold mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focusing:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              required
+            >
+              <option
+                className="text-gray-600 text-sm font-semibold"
+                value="Select a tax type"
+              >
+                Select a tax type
+              </option>
+              <option
+                className="text-gray-600 text-sm font-semibold"
+                value={`CGST ${formData.itemTaxRate}%, SGST ${formData.itemTaxRate}%`}
+              >
+                {/* {`CGST ${formData.itemTaxRate}, SGST ${formData.itemTaxRate}`} */}
+                CGST & SGST
+              </option>
+
+              <option
+                className="text-gray-600 text-sm font-semibold"
+                vlaue={`IGST ${formData.itemTaxRate}`}
+              >
+                {`IGST ${formData.itemTaxRate}`}
+              </option>
             </select>
           </div>
 
@@ -425,7 +613,7 @@ const Billing = () => {
               name="totalWithTax"
               value={totalWithTax}
               readOnly
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-gray-100"
+              className="text-gray-600 text-sm font-semibold mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-gray-100"
             />
           </div>
         </div>
@@ -434,27 +622,27 @@ const Billing = () => {
 
         <div className="mt-4">
           <label className="block text-sm font-medium text-gray-700">
-           Shipping Address
+            Shipping Address
           </label>
           <input
             type="text"
             name="shippingAddress"
             value={formData.shippingAddress}
             onChange={handleInputChange}
-            className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            className="text-gray-600 text-sm font-semibold mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           />
         </div>
 
         <div className="mt-4">
           <label className="block text-sm font-medium text-gray-700">
-           Delivery Address
+            Delivery Address
           </label>
           <input
             type="text"
             name="deliveryAddress"
             value={formData.deliveryAddress}
             onChange={handleInputChange}
-            className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            className="text-gray-600 text-sm font-semibold mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           />
         </div>
 
@@ -468,7 +656,7 @@ const Billing = () => {
             name="buyerName"
             value={formData.buyerName}
             onChange={handleInputChange}
-            className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            className="text-gray-600 text-sm font-semibold mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           />
         </div>
 
@@ -481,7 +669,7 @@ const Billing = () => {
             name="sellerName"
             value={formData.sellerName}
             onChange={handleInputChange}
-            className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            className="text-gray-600 text-sm font-semibold mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           />
         </div>
 
@@ -512,7 +700,9 @@ const Billing = () => {
                     Tax Invoice
                   </h1>
                   {/* <h1 className="text-lg font-bold text-gray-800">Invoice</h1> */}
-                  <p className="text-gray-600">Invoice Number: #12345</p>
+                  <p className="text-sm font-semibold text-gray-600">
+                    Invoice Number: #12345
+                  </p>
                 </div>
               </div>
             </div>
@@ -524,10 +714,9 @@ const Billing = () => {
                 </span>
                 {/* <span className="text-xs font-sm block text-title">Inventory Management Software</span> */}
               </span>
-              <p>FSS Number: #23465</p>
-              {/* <p className="text-gray-600">
-                Date: {new Date().toLocaleDateString()}
-              </p> */}
+              <p className="text-sm font-semibold text-gray-600">
+                FSS Number: #23465
+              </p>
             </div>
           </div>
 
@@ -538,32 +727,52 @@ const Billing = () => {
                 <p className="text-black">
                   <strong>Billing Address:</strong>
                 </p>
-                <p className="text-gray-600 mb-6">{formData.deliveryAddress}</p>
+                <p className="text-sm font-semibold text-gray-600 mb-6">
+                  {formData.deliveryAddress}
+                </p>
 
                 <p className="text-black">
                   <strong>Shipping Address:</strong>
                 </p>
-                <p className="text-gray-600 mb-6">{formData.shippingAddress}</p>
+                <p className="text-sm font-semibold text-gray-600 mb-6">
+                  {formData.shippingAddress}
+                </p>
 
-                <p>
-                  <strong>Date: </strong>
+                <p className="text-sm font-semibold text-gray-600">
+                  <strong className="text-gray-900">Date: </strong>
                   {new Date().toLocaleDateString()}
                 </p>
               </div>
               <div className="w-[45%] text-end">
                 <h2 className="text-lg font-bold text-black">Sold By</h2>
-                <p className="text-gray-600">Your Company Name</p>
-                <p className="text-gray-600">Address Line 1</p>
-                <p className="text-gray-600">Address Line 2</p>
-                <p className="text-gray-600">City, State, ZIP</p>
-                <p className="text-gray-600">Phone: (123) 456-7890</p>
+                <p className="text-sm font-semibold text-gray-600 text-gray-600">
+                  Your Company Name
+                </p>
+                <p className="text-sm font-semibold text-gray-600 text-gray-600">
+                  Address Line 1
+                </p>
+                <p className="text-sm font-semibold text-gray-600 text-gray-600">
+                  Address Line 2
+                </p>
+                <p className="text-sm font-semibold text-gray-600 text-gray-600">
+                  City, State, ZIP
+                </p>
+                <p className="text-sm font-semibold text-gray-600 text-gray-600">
+                  Phone: (123) 456-7890
+                </p>
                 <div className="mt-6">
-                  <p>
-                    <strong>PAN No: </strong>AALCA017E
-                  </p>
-                  <p>
-                    <strong>GST Registration No: </strong>AALCA017E
-                  </p>
+                  {/* <p className="text-md font-semibold text-gray-900">
+                    PAN No:{" "}
+                    <span className="text-sm font-semibold text-gray-600">
+                      AALCA017E
+                    </span>
+                  </p> */}
+                  {/* <p className="text-md font-semibold text-gray-900">
+                    GST Registration No:{" "}
+                    <span className="text-sm font-semibold text-gray-600">
+                      {formData.gstCode}
+                    </span>
+                  </p> */}
                 </div>
               </div>
             </div>
@@ -574,41 +783,37 @@ const Billing = () => {
             <table className="min-w-full bg-white border border-gray-300 rounded-lg">
               <thead>
                 <tr className="bg-gray-100 text-gray-700">
-                  <th className="py-2 px-4 border-b text-left text-sm md:text-base">
+                  <th className="py-2 px-4 border text-left text-sm md:text-base">
                     Serial No.
                   </th>{" "}
-        
-                  <th className="py-2 px-4 border-b text-left text-sm md:text-base">
+                  <th className="py-2 px-4 border text-left text-sm md:text-base">
                     Item
                   </th>
-                  <th className="py-2 px-4 border-b text-left text-sm md:text-base">
+                  <th className="py-2 px-4 border text-left text-sm md:text-base">
                     Type
                   </th>{" "}
-              
-                  <th className="py-2 px-4 border-b text-left text-sm md:text-base">
+                  <th className="py-2 px-4 border text-left text-sm md:text-base">
                     Quantity
                   </th>
-                  <th className="py-2 px-4 border-b text-left text-sm md:text-base">
+                  <th className="py-2 px-4 border text-left text-sm md:text-base">
                     MRP
                   </th>
-                  <th className="py-2 px-4 border-b text-left text-sm md:text-base">
+                  <th className="py-2 px-4 border text-left text-sm md:text-base">
                     Discount
                   </th>
-                  <th className="py-2 px-4 border-b text-left text-sm md:text-base">
+                  <th className="py-2 px-4 border text-left text-sm md:text-base">
                     Price{" "}
                   </th>
-                  <th className="py-2 px-4 border-b text-left text-sm md:text-base">
+                  {/* <th className="py-2 px-4 border text-left text-sm md:text-base">
+                    Tax Type
+                  </th>{" "} */}
+                  <th className="py-2 px-4 border text-left text-sm md:text-base">
                     Tax (%)
                   </th>{" "}
-                  {/* <th className="py-2 px-4 border-b text-left text-sm md:text-base">
-                    Tax type
-                  </th>{" "}
-              */}
-                  <th className="py-2 px-4 border-b text-left text-sm md:text-base">
+                  <th className="py-2 px-4 border text-left text-sm md:text-base">
                     Tax Amount
                   </th>{" "}
-            
-                  <th className="py-2 px-4 border-b text-left text-sm md:text-base">
+                  <th className="py-2 px-4 border text-left text-sm md:text-base">
                     Total
                   </th>
                 </tr>
@@ -616,31 +821,76 @@ const Billing = () => {
               <tbody>
                 {invoiceItems.map((item, index) => (
                   <tr key={index} className="text-sm md:text-base">
-                    <td className="py-2 px-4 border-b">{index + 1}</td>{" "}
-                  
-                    <td className="py-2 px-4 border-b">{item.itemName}</td>
-                    <td className="py-2 px-4 border-b">
+                    <td className="text-sm font-semibold text-gray-600 py-2 px-4 border">
+                      {index + 1}
+                    </td>{" "}
+                    <td className="text-sm font-semibold text-gray-600 py-2 px-4 border">
+                      {item.itemName}
+                    </td>
+                    <td className="text-sm font-semibold text-gray-600 py-2 px-4 border">
                       {item.unitAndKg}
                     </td>{" "}
-           
-                    <td className="py-2 px-4 border-b">
+                    <td className="text-sm font-semibold text-gray-600 py-2 px-4 border">
                       {item.quantity} {item.category}
                     </td>
-                    <td className="py-2 px-4 border-b">₹{item.mrp}</td>
-                    <td className="py-2 px-4 border-b">- ₹{item.discount}</td>
-                    <td className="py-2 px-4 border-b">₹{item.pricePerItem}</td>
-                    <td className="py-2 px-4 border-b">
+                    <td className="text-sm font-semibold text-gray-600 py-2 px-4 border">
+                      ₹{item.mrp}
+                    </td>
+                    <td className="text-sm font-semibold text-gray-600 py-2 px-4 border">
+                      - ₹{item.discount}
+                    </td>
+                    <td className="text-sm font-semibold text-gray-600 py-2 px-4 border">
+                      ₹{item.pricePerItem}
+                    </td>
+                    {/* <td className="text-sm font-semibold text-gray-600 py-2 px-4 border"> 
+                      {/* {(() => {
+                        // Extract all tax types and numeric values from the string
+                        const matches =
+                          item.itemTaxType.match(/([A-Za-z]+)\s*(\d+)/g); // Match all occurrences of "TaxType Value"
+
+                        if (matches) {
+                          // Process each match
+                          const formattedResults = matches.map((match) => {
+                            const [taxType, value] = match.split(/\s+/); // Split into tax type and value
+                            const numericValue = parseFloat(value); // Convert the value to a number
+
+                            // Apply /2 only for CGST and SGST
+                            const finalValue =
+                              taxType === "CGST" || taxType === "SGST"
+                                ? (numericValue / 2).toFixed(2)
+                                : numericValue.toFixed(2);
+
+                            return `${taxType} ${finalValue}%`; // Format and return
+                          });
+
+                          return formattedResults.join(" + "); // Join all formatted results with ' + '
+                        }
+
+                        return `${item.itemTaxType}%`; // Return original value if no matches are found
+                      })()}
+                    </td>  */}
+                    {/* <td className="text-sm font-semibold text-gray-600 py-2 px-4 border-b">
+                      {(() => {
+                        // Extract numeric value from the tax type string
+                        const match = item.itemTaxType.match(/\d+/); // This finds the first sequence of digits in the string
+                        if (match) {
+                          const numericValue = parseFloat(match[0]); // Convert the extracted string to a number
+                          return (numericValue / 2).toFixed(2); // Divide by 2 and format to 2 decimal places
+                        }
+                        return item.itemTaxType ; // Return 'N/A' or another default value if no number is found
+                      })()}
+                    </td> */}
+                    {/* {(item.itemTaxRate / 2).toFixed(1)} */}
+                    <td className="text-sm font-semibold text-gray-600 py-2 px-4 border">
                       {item.itemTaxRate}%
                     </td>{" "}
                     {/* <td className="py-2 px-4 border-b">
                        {item.itemTaxType}
                     </td>{" "} */}
-            
-                    <td className="py-2 px-4 border-b">
+                    <td className="text-sm font-semibold text-gray-600 py-2 px-4 border">
                       ₹{item.taxAmount}
                     </td>{" "}
-       
-                    <td className="py-2 px-4 border-b">
+                    <td className="text-sm font-semibold text-gray-600 py-2 px-4 border">
                       ₹{item.totalAmountWithTax}
                     </td>{" "}
                   </tr>
@@ -649,32 +899,61 @@ const Billing = () => {
               <tfoot>
               <tr>
                   <td
-                    colSpan="9"
-                    className="py-2 px-4 border-t text-right font-bold"
+                    colSpan="7"
+                    className="text-sm font-semibold text-gray-900 py-2 px-4 border-t text-right font-bold"
                   >
-                    {/* Tax ({taxPercentage}%) */}
                     Tax type
                   </td>
-                  <td className="py-2 px-4 border-t">{formData.itemTaxType}</td>
+                  <td className="text-sm font-semibold text-gray-600 py-2 px-4 border-t">
+                  {(() => {
+                        // Extract all tax types and numeric values from the string
+                        const matches =
+                          formData.itemTaxType.match(/([A-Za-z]+)\s*(\d+)/g); // Match all occurrences of "TaxType Value"
+
+                        if (matches) {
+                          // Process each match
+                          const formattedResults = matches.map((match) => {
+                            const [taxType, value] = match.split(/\s+/); // Split into tax type and value
+                            const numericValue = parseFloat(value); // Convert the value to a number
+
+                            // Apply /2 only for CGST and SGST
+                            const finalValue =
+                              taxType === "CGST" || taxType === "SGST"
+                                ? (numericValue / 2).toFixed(2)
+                                : numericValue.toFixed(2);
+
+                            return `${taxType} ${finalValue}%`; // Format and return
+                          });
+
+                          return formattedResults.join(" + "); // Join all formatted results with ' + '
+                        }
+
+                        return `${formData.itemTaxType}%`; // Return original value if no matches are found
+                      })()}
+                  </td>
                 </tr>
                 <tr>
                   <td
-                    colSpan="9"
-                    className="py-2 px-4 border-t text-right font-bold"
+                    colSpan="8"
+                    className="text-sm font-semibold text-gray-900 py-2 px-4 border-t text-right font-bold"
                   >
                     {/* Tax ({taxPercentage}%) */}
                     Total tax amount
                   </td>
-                  <td className="py-2 px-4 border-t">₹{taxAmount}</td>
+                  <td className="text-sm font-semibold text-gray-600 py-2 px-4 border-t">
+                    ₹{taxAmount}
+                  </td>
                 </tr>
                 <tr>
                   <td
                     colSpan="9"
-                    className="py-2 px-4 border-t text-right font-bold"
+                    className="text-sm font-semibold text-gray-900 py-2 px-4 border-t text-right font-bold"
                   >
                     Total with Tax
                   </td>
-                  <td className="py-2 px-4 border-t">₹{totalWithTax}</td>
+                  <td className="text-sm font-semibold text-gray-600 py-2 px-4 border-t">
+                    ₹{totalWithTax}
+                  </td>
                 </tr>
               </tfoot>
             </table>
@@ -682,8 +961,12 @@ const Billing = () => {
 
           {/* Footer Section */}
           <div className="mt-6 text-center">
-            <p className="text-gray-600 mb-4">Thank you for your business!</p>
-            <p className="text-gray-600">Payment Method: Bank Transfer</p>
+            <p className="text-sm font-semibold text-gray-600 text-gray-600 mb-4">
+              Thank you for your business!
+            </p>
+            <p className="text-sm font-semibold text-gray-600 text-gray-600">
+              Payment Method: Bank Transfer
+            </p>
           </div>
         </div>
       )}
@@ -697,6 +980,22 @@ const Billing = () => {
           Print Invoice
         </button>
       </div>
+      {/* <div className="relative">
+  <div className="fixed inset-0 bg-black bg-opacity-50 z-40"></div>  */}
+  {/* <div className="fixed inset-0 flex justify-center items-center z-50">
+    <iframe
+      src="https://netflix.com"
+      title="W3Schools Free Online Web Tutorials"
+      className="w-full h-96 border-none shadow-lg
+
+      w-full: 
+      h-96:
+      border-none
+      shadow-lg"
+    ></iframe>
+  </div> 
+</div>*/}
+
     </div>
   );
 };

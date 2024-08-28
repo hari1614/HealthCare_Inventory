@@ -7,6 +7,7 @@ import { useProductContext } from "./hooks/useProductContext";
 import useFetch from "./hooks/useFetch";
 import LowStockAlert from "./reusable/LowStockAlert";
 import LogoutDialog from "./reusable/LogoutDialog";
+import Tooltip from "./reusable/Tooltip";
 import {
   faBars,
   faTimes,
@@ -109,7 +110,6 @@ const Navbar = () => {
           )}
 
           {user && !user?.subAdmin && (
-            
             <Link
               to="/forms"
               className="text-gray-700 transition hover:text-sea focus:outline-none  focus:ring-sea focus:ring-offset-2 transition duration-300 ease-in-out transform hover:scale-105"
@@ -132,16 +132,23 @@ const Navbar = () => {
             </Link>
           )}
           {user && (
-              <Link
+            <Link
+              to="/stocks"
+              className="text-gray-700 transition hover:text-sea focus:outline-none  focus:ring-sea focus:ring-offset-2 transition duration-300 ease-in-out transform hover:scale-105"
+            >
+              {" "}
+              Stocks
+            </Link>
+          )}
+          {user && (
+            <Link
               to="/billing"
               className="text-gray-700 transition hover:text-sea focus:outline-none  focus:ring-sea focus:ring-offset-2 transition duration-300 ease-in-out transform hover:scale-105"
             >
               {" "}
               Billing
             </Link>
-
           )}
-
 
           {user && (
             <div className=" flex items-end text-xs text-gray-600 font-semibold">
@@ -241,35 +248,35 @@ const Navbar = () => {
           <div className="space-y-4">
             <Link
               to="/"
-              className="font-medium block p-3 hover:bg-gray-50 rounded-lg"
+              className="font-medium block p-3 transform transition duration-500 hover:scale-100 hover:shadow-lg hover:bg-gray-300 rounded-lg"
               onClick={closeSidebar}
             >
               Home
             </Link>
             <Link
               to="/forms"
-              className="font-medium block p-3 hover:bg-gray-50 rounded-lg"
+              className="font-medium block p-3 transform transition duration-500 hover:scale-100 hover:shadow-lg hover:bg-gray-300 rounded-lg"
               onClick={closeSidebar}
             >
               Add new product
             </Link>
             <Link
               to="/products"
-              className="font-medium block p-3 hover:bg-gray-50 rounded-lg"
+              className=" font-medium block p-3 transform transition duration-500 hover:scale-100 hover:shadow-lg hover:bg-gray-300 rounded-lg"
               onClick={closeSidebar}
             >
               Products
             </Link>
             <Link
               to="/notification"
-              className="font-medium block p-3 hover:bg-gray-50 rounded-lg"
+              className="font-medium block p-3 transform transition duration-500 hover:scale-100 hover:shadow-lg hover:bg-gray-300 rounded-lg"
               onClick={closeSidebar}
             >
               Notifications
             </Link>
             <Link
               to="/billing"
-              className="font-medium block p-3 hover:bg-gray-50 rounded-lg"
+              className="font-medium block p-3 transform transition duration-500 hover:scale-100 hover:shadow-lg hover:bg-gray-300 rounded-lg"
               onClick={closeSidebar}
             >
               Billing
@@ -314,6 +321,19 @@ const Navbar = () => {
               Logout
             </Link>
           )}
+          <div>
+            <div className="flex flex-col items-center justify-center sm:mt-8 dark:border-gray-700 mt-6">
+              <Tooltip text="RKS Health Care" position="bottom">
+                <span className="block text-sm text-gray-500 sm:text-center dark:text-gray-400 mt-2">
+                  © 2024{" "}
+                  <a href="#" className="hover:underline">
+                    RKS Health Care™
+                  </a>
+                  . All Rights Reserved.
+                </span>
+              </Tooltip>
+            </div>
+          </div>
         </div>
       </nav>
 
