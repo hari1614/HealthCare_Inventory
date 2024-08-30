@@ -6,6 +6,7 @@ import { validateFormData } from "../utils/validation";
 import InputFields from "./forms/InputFields";
 import InvoiceDetails from "./invoice/InvoiceDetails";
 import { convertNumberToWordsWithDecimal } from "../utils/utils";
+import { formatDateToYYYYMMDD } from "../utils/dateUtils";
 import MainForm from "./forms/MainForm";
 import PurchaseInvoiceDetails from "./invoice/PurchaseInvoiceDetails";
 
@@ -36,6 +37,7 @@ const Billing = () => {
     supplierFssaiNo:"",
     supplierAddress:"",
     supplierState:"",
+    date:formatDateToYYYYMMDD(new Date().toISOString()),
   });
   const [searchTerm, setSearchTerm] = useState("");
   const [isOpen, setIsOpen] = useState(false);

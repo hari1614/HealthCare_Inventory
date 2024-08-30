@@ -586,7 +586,7 @@ const InputFields = ({
         type="submit"
         className="w-full bg-sea hover:bg-hover1 text-white font-medium text-sm shadow-xl hover:shadow-lg py-2 px-4 rounded focus:outline-none focus:shadow-outline flex justify-center  items-center"
       >
-        Generate Invoice
+        Generate 
       </button>
     </div>
   </div>

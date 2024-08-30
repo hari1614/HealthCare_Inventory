@@ -27,7 +27,7 @@ const InvoiceDetails = ({
                 <h1 className="text-2xl font-bold text-gray-800 ">
                   Tax Invoice
                 </h1>
-         
+
                 <p className="text-sm font-semibold text-gray-600">
                   Invoice Number: #12345
                 </p>
@@ -289,7 +289,6 @@ const InvoiceDetails = ({
             <tbody>
               {invoiceItems.map((item, index) => (
                 <tr key={index} className="text-sm md:text-base">
-
                   <td className="text-sm font-semibold text-gray-600 py-2 px-4 border">
                     {item.hsnCode}
                   </td>
@@ -308,7 +307,6 @@ const InvoiceDetails = ({
                     ) : (
                       ""
                     )}
-
                   </td>
                   <td className="text-sm font-semibold text-gray-600 py-2 px-4 border">
                     {item.itemTaxRate !== undefined &&
@@ -483,14 +481,16 @@ const InvoiceDetails = ({
     )}
 
     {/* Print Button */}
-    <div className="mt-6">
-      <button
-        onClick={handlePrint}
-        className="w-full bg-sea hover:bg-hover1 text-white font-medium text-sm shadow-xl hover:shadow-lg py-2 px-4 rounded focus:outline-none focus:shadow-outline flex justify-center items-center"
-      >
-        Print Invoice
-      </button>
-    </div>
+    {formData.transactionType === "Selling" && (
+      <div className="mt-6">
+        <button
+          onClick={handlePrint}
+          className="w-full bg-sea hover:bg-hover1 text-white font-medium text-sm shadow-xl hover:shadow-lg py-2 px-4 rounded focus:outline-none focus:shadow-outline flex justify-center items-center"
+        >
+          Print Invoice
+        </button>
+      </div>
+    )}
   </div>
 );
 

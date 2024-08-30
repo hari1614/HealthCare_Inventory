@@ -1,3 +1,4 @@
+//updated on 29-08-24, medium screen responsiveness added
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -85,7 +86,7 @@ const Navbar = () => {
 
   return (
     <>
-      <nav className="sticky top-0 z-50 p-3 flex bg-white justify-between items-center shadow-md">
+      <nav className="sticky top-0 z-50 p-3 flex flex-wrap bg-white justify-between items-center shadow-md">
         <a
           href="#"
           id="brand"
@@ -99,7 +100,7 @@ const Navbar = () => {
           </span>
         </a>
 
-        <div id="nav-menu" className="hidden md:flex gap-12">
+        <div id="nav-menu" className="hidden md:flex gap-12 flex-wrap">
           {user && (
             <Link
               to="/"
@@ -112,18 +113,18 @@ const Navbar = () => {
           {user && !user?.subAdmin && (
             <Link
               to="/forms"
-              className="text-gray-700 transition hover:text-sea focus:outline-none  focus:ring-sea focus:ring-offset-2 transition duration-300 ease-in-out transform hover:scale-105"
+              className="text-gray-700 transition hover:text-sea focus:outline-none focus:ring-sea focus:ring-offset-2 transition duration-300 ease-in-out transform hover:scale-105"
             >
               Add new product
             </Link>
           )}
+
           {user && (
             <Link
-              to="notification"
-              className="text-gray-700 transition hover:text-sea focus:outline-none  focus:ring-sea focus:ring-offset-2 transition duration-300 ease-in-out transform hover:scale-105"
+              to="/notification"
+              className="text-gray-700 transition hover:text-sea focus:outline-none focus:ring-sea focus:ring-offset-2 transition duration-300 ease-in-out transform hover:scale-105"
             >
               Notification
-              {/* Add the lowStockCount badge */}
               {user && lowStockCount > 0 && (
                 <span className="inline-flex items-center justify-center w-5 h-5 ms-2 text-xs font-semibold text-white bg-sea rounded-full">
                   {lowStockCount}
@@ -131,27 +132,27 @@ const Navbar = () => {
               )}
             </Link>
           )}
+
           {user && (
             <Link
               to="/stocks"
-              className="text-gray-700 transition hover:text-sea focus:outline-none  focus:ring-sea focus:ring-offset-2 transition duration-300 ease-in-out transform hover:scale-105"
+              className="text-gray-700 transition hover:text-sea focus:outline-none focus:ring-sea focus:ring-offset-2 transition duration-300 ease-in-out transform hover:scale-105"
             >
-              {" "}
               Stocks
             </Link>
           )}
+
           {user && (
             <Link
               to="/billing"
-              className="text-gray-700 transition hover:text-sea focus:outline-none  focus:ring-sea focus:ring-offset-2 transition duration-300 ease-in-out transform hover:scale-105"
+              className="text-gray-700 transition hover:text-sea focus:outline-none focus:ring-sea focus:ring-offset-2 transition duration-300 ease-in-out transform hover:scale-105"
             >
-              {" "}
               Billing
             </Link>
           )}
 
           {user && (
-            <div className=" flex items-end text-xs text-gray-600 font-semibold">
+            <div className="flex flex-col items-start text-xs text-gray-600 font-semibold">
               <h1 className="text-md text-gray-700 font-semibold">
                 Welcome, {user ? user.name : "Guest"}!
               </h1>
@@ -166,7 +167,7 @@ const Navbar = () => {
           )}
         </div>
 
-        <div className="hidden md:flex gap-2">
+        <div className="hidden md:flex gap-2 items-center">
           {user && (
             <Link
               to="/profile"
@@ -178,6 +179,7 @@ const Navbar = () => {
               </span>
             </Link>
           )}
+
           {user?.admin && (
             <Link
               to="/addusers"
@@ -189,34 +191,29 @@ const Navbar = () => {
               </span>
             </Link>
           )}
+
           {!user && (
             <Link
               to="/login"
               className="bg-gray-500 hover:bg-gray-600 text-white font-medium text-sm shadow-xl hover:shadow-lg py-2 px-4 rounded focus:outline-none focus:shadow-outline flex items-center"
             >
-              {" "}
               Login
               <span>
                 <FontAwesomeIcon className="ml-2" icon={faUser} />
               </span>
             </Link>
           )}
+
           {user && (
-            <div>
-              {/* Button to open logout confirmation dialog */}
-              <button
-                onClick={openLogoutDialog}
-                className="bg-gray-500 hover:bg-gray-600 text-white font-medium text-sm shadow-xl hover:shadow-lg py-2 px-4 rounded focus:outline-none focus:shadow-outline flex items-center"
-              >
-                Log out
-                <span>
-                  <FontAwesomeIcon
-                    className="ml-2"
-                    icon={faArrowRightFromBracket}
-                  />
-                </span>
-              </button>
-            </div>
+            <button
+              onClick={openLogoutDialog}
+              className="bg-gray-500 hover:bg-gray-600 text-white font-medium text-sm shadow-xl hover:shadow-lg py-2 px-4 rounded focus:outline-none focus:shadow-outline flex items-center"
+            >
+              Log out
+              <span>
+                <FontAwesomeIcon className="ml-2" icon={faArrowRightFromBracket} />
+              </span>
+            </button>
           )}
         </div>
 
@@ -261,18 +258,18 @@ const Navbar = () => {
               Add new product
             </Link>
             <Link
-              to="/products"
-              className=" font-medium block p-3 transform transition duration-500 hover:scale-100 hover:shadow-lg hover:bg-gray-300 rounded-lg"
-              onClick={closeSidebar}
-            >
-              Products
-            </Link>
-            <Link
               to="/notification"
               className="font-medium block p-3 transform transition duration-500 hover:scale-100 hover:shadow-lg hover:bg-gray-300 rounded-lg"
               onClick={closeSidebar}
             >
               Notifications
+            </Link>
+            <Link
+              to="/stocks"
+              className="font-medium block p-3 transform transition duration-500 hover:scale-100 hover:shadow-lg hover:bg-gray-300 rounded-lg"
+              onClick={closeSidebar}
+            >
+              Stocks
             </Link>
             <Link
               to="/billing"
@@ -294,6 +291,7 @@ const Navbar = () => {
               Add
             </Link>
           )}
+
           {user && (
             <Link
               to="/profile"
@@ -303,6 +301,7 @@ const Navbar = () => {
               Profile
             </Link>
           )}
+
           {!user && (
             <Link
               to="/login"
@@ -312,6 +311,7 @@ const Navbar = () => {
               Login
             </Link>
           )}
+
           {user && (
             <Link
               to="/login"
@@ -321,18 +321,17 @@ const Navbar = () => {
               Logout
             </Link>
           )}
-          <div>
-            <div className="flex flex-col items-center justify-center sm:mt-8 dark:border-gray-700 mt-6">
-              <Tooltip text="RKS Health Care" position="bottom">
-                <span className="block text-sm text-gray-500 sm:text-center dark:text-gray-400 mt-2">
-                  © 2024{" "}
-                  <a href="#" className="hover:underline">
-                    RKS Health Care™
-                  </a>
-                  . All Rights Reserved.
-                </span>
-              </Tooltip>
-            </div>
+
+          <div className="flex flex-col items-center justify-center mt-6">
+            <Tooltip text="RKS Health Care" position="bottom">
+              <span className="block text-sm text-gray-500 sm:text-center mt-2">
+                © 2024{" "}
+                <a href="#" className="hover:underline">
+                  RKS Health Care™
+                </a>
+                . All Rights Reserved.
+              </span>
+            </Tooltip>
           </div>
         </div>
       </nav>
@@ -347,7 +346,7 @@ const Navbar = () => {
       {/* Logout Success Message */}
       {logoutSuccess && (
         <div
-          className="fixed bottom-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-md text-xs text-center border bg-green-100 text-green-800 border-green-300 "
+          className="fixed bottom-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-md text-xs text-center border bg-green-100 text-green-800 border-green-300"
           style={{ zIndex: 1001 }}
         >
           Logout successfully.

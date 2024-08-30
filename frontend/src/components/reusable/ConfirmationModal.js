@@ -30,4 +30,4 @@ const ConfirmationModal = ({ isOpen, onClose, onConfirm }) => {
   );
 };
 
-export default ConfirmationModal;
+export default ConfirmationModal; 

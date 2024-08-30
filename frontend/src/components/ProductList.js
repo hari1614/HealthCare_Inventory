@@ -4,6 +4,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faMagnifyingGlass,
   faDownload,
+  faArrowLeft,
+  faArrowRight
 } from "@fortawesome/free-solid-svg-icons";
 import { useProductContext } from "./hooks/useProductContext";
 import { useAuthContext } from "./hooks/useAuthContext";
@@ -24,6 +26,9 @@ const ProductList = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isButtonVisible, setButtonVisible] = useState(false);
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 20; // Number of items per page
   const { user } = useAuthContext();
 
   useFetch(user, selectedType, selectedQuantity, dispatch); // Use the custom hook
@@ -153,6 +158,23 @@ const ProductList = () => {
       });
   };
 
+  // Calculate the products for the current page
+  const indexOfLastProduct = currentPage * itemsPerPage;
+  const indexOfFirstProduct = indexOfLastProduct - itemsPerPage;
+  const currentProducts = sortedProducts.slice(
+    indexOfFirstProduct,
+    indexOfLastProduct
+  );
+
+  // Pagination controls
+  const totalPages = Math.ceil(sortedProducts.length / itemsPerPage);
+
+  const handlePageChange = (newPage) => {
+    if (newPage > 0 && newPage <= totalPages) {
+      setCurrentPage(newPage);
+    }
+  };
+
   const handleClickDown = () => {
     setButtonVisible(true);
   };
@@ -274,6 +296,9 @@ const ProductList = () => {
             <thead className="bg-[#fff5] sticky top-0 bg-blue-600  rounded-xl shadow-lg transition-transform text-white border-b border-blue-400 dark:text-white z-10">
               <tr>
                 <th className="px-4 py-3 bg-sea sm:px-8 md:py-4 lg:py-3">
+                  S.No
+                </th>
+                <th className="px-4 py-3 bg-sea sm:px-8 md:py-4 lg:py-3">
                   Name
                 </th>
                 <th className="px-4 py-3 bg-sea sm:px-8 md:py-4 lg:py-3">
@@ -310,7 +335,35 @@ const ProductList = () => {
               </tr>
             </thead>
             <tbody>
-              {sortedProducts.length > 0 ? (
+              {currentProducts.length > 0 ? (
+                currentProducts.map((product, index) => (
+                  <Table
+                    key={product._id}
+                    index={index} // Pass the 1-based index
+                    name={product.name}
+                    productNum={product.productNum}
+                    quantity={product.quantity}
+                    unitAndKg={product.unitAndKg}
+                    mrp={product.mrp}
+                    stock={product.stock}
+                    price={product.price}
+                    date={product.date}
+                    _id={product._id}
+                    taxPercentage={product.taxPercentage}
+                    handleRemoveProduct={handleRemoveProduct}
+                    selectedType={selectedType}
+                    currentPage={currentPage}
+                    itemsPerPage={itemsPerPage}
+                  />
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="14" className="text-center text-black py-4 px-6">
+                    No products available
+                  </td>
+                </tr>
+              )}
+              {/* {sortedProducts.length > 0 ? (
                 sortedProducts.map((product) => (
                   <Table
                     key={product._id}
@@ -337,10 +390,33 @@ const ProductList = () => {
                     No products available
                   </td>
                 </tr>
-              )}
+              )} */}
             </tbody>
           </table>
         </div>
+      </div>
+
+      {/* Pagination Controls */}
+      <div className="flex justify-center gap-60 items-center mt-4">
+        <button
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+          className="px-4 py-2 bg-gray-500 hover:bg-hover2 text-white text-xs font-semibold rounded disabled:opacity-50"
+        >
+          <FontAwesomeIcon className="mr-2 mt-1"  icon={faArrowLeft} />
+          Previous
+        </button>
+        <span className="text-gray-700 text-sm font-semibold">
+          Page {currentPage} of {totalPages}
+        </span>
+        <button
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          className="px-4 py-2 bg-gray-500 hover:bg-hover2 text-white text-xs font-semibold rounded disabled:opacity-50"
+        >
+          Next
+          <FontAwesomeIcon className="ml-2 mt-1" icon={faArrowRight} />
+        </button>
       </div>
       {/* Add download button */}
       <div className="flex justify-center">

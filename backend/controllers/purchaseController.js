@@ -32,7 +32,7 @@ const getPurchase = async (req, res) => {
 
 // Create a new purchase
 const createPurchase = async (req, res) => {
-  const { productName, hsnCode, category, quantity } = req.body;
+  const { productName, hsnCode, category, quantity, date } = req.body;
 
   try {
     const purchase = await PurchaseModel.create({
@@ -40,6 +40,7 @@ const createPurchase = async (req, res) => {
       hsnCode,
       category,
       quantity,
+      date
     });
     res.status(200).json(purchase);
   } catch (error) {

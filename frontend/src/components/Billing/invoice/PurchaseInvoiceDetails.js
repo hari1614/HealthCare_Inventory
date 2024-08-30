@@ -489,14 +489,16 @@ const PurchaseInvoiceDetails = ({
     )}
 
     {/* Print Button */}
-    <div className="mt-6">
-      <button
-        onClick={handlePrint}
-        className="w-full bg-sea hover:bg-hover1 text-white font-medium text-sm shadow-xl hover:shadow-lg py-2 px-4 rounded focus:outline-none focus:shadow-outline flex justify-center items-center"
-      >
-        Print Invoice
-      </button>
-    </div>
+    {formData.transactionType === "Buying" && (
+      <div className="mt-6">
+        <button
+          onClick={handlePrint}
+          className="w-full bg-sea hover:bg-hover1 text-white font-medium text-sm shadow-xl hover:shadow-lg py-2 px-4 rounded focus:outline-none focus:shadow-outline flex justify-center items-center"
+        >
+          Print Invoice
+        </button>
+      </div>
+    )}
   </div>
 );
 

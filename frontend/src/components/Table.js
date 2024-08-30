@@ -16,6 +16,7 @@ import "../css/Table.css";
 
 const Table = ({
   _id,
+  index,
   name,
   productNum,
   quantity,
@@ -27,6 +28,8 @@ const Table = ({
   date,
   handleRemoveProduct,
   selectedType,
+  currentPage,
+  itemsPerPage
 }) => {
   const { dispatch } = useProductContext();
   const [selectedQuantity, setSelectedQuantity] = useState("1");
@@ -49,6 +52,8 @@ const Table = ({
 
   const [isLoading, setIsLoading] = useState(false);
   const [feedback, setFeedback] = useState("");
+  // Pagination state
+
   const { user } = useAuthContext();
   const { handleDelete } = useProductActions(
     _id,
@@ -174,6 +179,9 @@ const Table = ({
   return (
     <>
       <tr className="bg-sea hover:bg-hover1 text-white-500 border-b border-blue-400">
+        <td className="px-4 py-2 sm:px-8 md:py-6 lg:py-4 font-medium text-sm">
+          {(currentPage - 1) * itemsPerPage + index + 1}
+        </td>
         <td className="px-4 py-2 whitespace-nowrap text-transform: capitalize font-medium text-sm text-black-40 whitespace-wrap dark:text-blue-100 sm:px-8 md:py-6 lg:py-4">
           {isEditing ? (
             <input
