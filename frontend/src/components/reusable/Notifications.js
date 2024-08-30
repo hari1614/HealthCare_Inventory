@@ -108,7 +108,7 @@ const Notifications = () => {
             {generalLowStockProducts.map((product) => (
               <div
                 key={product._id}
-                className="bg-white border-l-4 border-sea p-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 hover:shadow-xl"
+                className="bg-[rgba(0,255,0,0.03)] border-l-4 border-sea p-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 hover:shadow-xl"
               >
                 <h4 className="text-lg font-semibold text-gray-800">{product.name}</h4>
                 <p className="text-sm font-medium text-gray-600">Quantity: {product.unitAndKg}</p>
@@ -128,7 +128,7 @@ const Notifications = () => {
             {kgLowStockProducts.map((product) => (
               <div
                 key={product._id}
-                className="bg-white border-l-4 border-sea p-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 hover:shadow-xl"
+                className="bg-[rgba(0,255,0,0.05)]  border-l-4 border-sea p-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 hover:shadow-xl"
               >
                 <h4 className="text-lg font-semibold text-gray-800">{product.name}</h4>
                 <p className="text-sm font-medium text-gray-600">Stock: {product.stock}</p>

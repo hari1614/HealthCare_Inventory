@@ -5,7 +5,7 @@ import {
   faMagnifyingGlass,
   faDownload,
   faArrowLeft,
-  faArrowRight
+  faArrowRight,
 } from "@fortawesome/free-solid-svg-icons";
 import { useProductContext } from "./hooks/useProductContext";
 import { useAuthContext } from "./hooks/useAuthContext";
@@ -43,15 +43,6 @@ const ProductList = () => {
       }
     });
   };
-
-  // const handleTypeChange = (event) => {
-  //   setSelectedType(event.target.value);
-  // };
-
-  // // New function to handle quantity filter changes
-  // const handleQuantityChange = (event) => {
-  //   setSelectedQuantity(event.target.value);
-  // };
 
   const handleTypeChange = (event) => {
     setSelectedType(event.target.value);
@@ -287,7 +278,7 @@ const ProductList = () => {
         </div>
       </form>
 
-      <div className="overflow-x-auto shadow-xl mt-8 w-[98%] ml-4 rounded-md shadow-custom">
+      <div className="overflow-x-auto shadow-xl mt-8 w-[100%] ml-4 rounded-md shadow-custom">
         <div className=" relative max-h-[calc(70vh-7rem)] overflow-y-auto">
           <table
             id="productTable"
@@ -363,48 +354,18 @@ const ProductList = () => {
                   </td>
                 </tr>
               )}
-              {/* {sortedProducts.length > 0 ? (
-                sortedProducts.map((product) => (
-                  <Table
-                    key={product._id}
-                    name={product.name}
-                    productNum={product.productNum}
-                    quantity={product.quantity}
-                    unitAndKg={product.unitAndKg}
-                    mrp={product.mrp}
-                    stock={product.stock}
-                    price={product.price}
-                    date={product.date}
-                    _id={product._id}
-                    taxPercentage={product.taxPercentage}
-                    handleRemoveProduct={handleRemoveProduct}
-                    selectedType={selectedType}
-                  />
-                ))
-              ) : (
-                <tr>
-                  <td
-                    colSpan="14"
-                    className="text-center text-black py-4 black px-6 py-6"
-                  >
-                    No products available
-                  </td>
-                </tr>
-              )} */}
             </tbody>
           </table>
         </div>
       </div>
-
-      {/* Pagination Controls */}
-      <div className="flex justify-center gap-60 items-center mt-4">
+      <div className="flex flex-col sm:flex-row sm:justify-center gap-4 sm:gap-8 items-center mt-4">
         <button
           onClick={() => handlePageChange(currentPage - 1)}
           disabled={currentPage === 1}
-          className="px-4 py-2 bg-gray-500 hover:bg-hover2 text-white text-xs font-semibold rounded disabled:opacity-50"
+          className="px-4 py-2 bg-gray-500 hover:bg-hover2 text-white text-xs font-semibold rounded disabled:opacity-50 flex items-center"
         >
-          <FontAwesomeIcon className="mr-2 mt-1"  icon={faArrowLeft} />
-          Previous
+          <FontAwesomeIcon className="mr-2" icon={faArrowLeft} />
+          <span className="hidden sm:inline">Previous</span>
         </button>
         <span className="text-gray-700 text-sm font-semibold">
           Page {currentPage} of {totalPages}
@@ -412,12 +373,13 @@ const ProductList = () => {
         <button
           onClick={() => handlePageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
-          className="px-4 py-2 bg-gray-500 hover:bg-hover2 text-white text-xs font-semibold rounded disabled:opacity-50"
+          className="px-4 py-2 bg-gray-500 hover:bg-hover2 text-white text-xs font-semibold rounded disabled:opacity-50 flex items-center"
         >
-          Next
-          <FontAwesomeIcon className="ml-2 mt-1" icon={faArrowRight} />
+          <span className="hidden sm:inline">Next</span>
+          <FontAwesomeIcon className="ml-2" icon={faArrowRight} />
         </button>
       </div>
+
       {/* Add download button */}
       <div className="flex justify-center">
         <div className="text-center my-4">

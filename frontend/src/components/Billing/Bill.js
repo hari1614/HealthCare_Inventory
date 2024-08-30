@@ -3,7 +3,6 @@ import { useProductContext } from "../hooks/useProductContext";
 import { useReactToPrint } from "react-to-print";
 import { taxDropdownOptions, stateDropdownOptions } from "../utils/utils";
 import { validateFormData } from "../utils/validation";
-import InputFields from "./forms/InputFields";
 import InvoiceDetails from "./invoice/InvoiceDetails";
 import { convertNumberToWordsWithDecimal } from "../utils/utils";
 import { formatDateToYYYYMMDD } from "../utils/dateUtils";
@@ -34,10 +33,10 @@ const Billing = () => {
     productName: "",
     supplierName: "",
     supplierGstNo: "",
-    supplierFssaiNo:"",
-    supplierAddress:"",
-    supplierState:"",
-    date:formatDateToYYYYMMDD(new Date().toISOString()),
+    supplierFssaiNo: "",
+    supplierAddress: "",
+    supplierState: "",
+    date: formatDateToYYYYMMDD(new Date().toISOString()),
   });
   const [searchTerm, setSearchTerm] = useState("");
   const [isOpen, setIsOpen] = useState(false);
@@ -51,68 +50,12 @@ const Billing = () => {
   const [isManualDiscount, setIsManualDiscount] = useState(false); // New state to track manual discount change
   const [errors, setErrors] = useState({}); // State to hold validation errors
   const [existingHSNCodes, setExistingHSNCodes] = useState([]); // List of existing HSN codes
-  const [selectedState, setSelectedState] = useState('');
-  const [selectedCode, setSelectedCode] = useState('');
+  const [selectedState, setSelectedState] = useState("");
+  const [selectedCode, setSelectedCode] = useState("");
   const invoiceRef = useRef();
 
-  // //New input
-  // const handleInputChange = (e) => {
-  //   const { name, value } = e.target;
-  //   const updatedFormData = { ...formData, [name]: value };
-
-  //   if ((name === "mrp" || name === "pricePerItem") && !isManualDiscount) {
-  //     // Auto-calculate discount only if the user hasn't manually changed it
-  //     const discount = updatedFormData.mrp - updatedFormData.pricePerItem;
-  //     updatedFormData.discount = discount > 0 ? discount : 0;
-  //   }
-
-  //   if (name === "discount") {
-  //     setIsManualDiscount(true); // Mark that the discount is manually changed
-  //   }
-
-  //   if (name === "gstCode") {
-  //     // Extract the first two characters to determine the tax type
-  //     const firstTwoChars = value.slice(0, 2);
-
-  //     if (firstTwoChars === "34") {
-  //       updatedFormData.itemTaxType = `CGST ${formData.itemTaxRate}, SGST ${formData.itemTaxRate}`;
-  //     } else {
-  //       updatedFormData.itemTaxType = `IGST ${formData.itemTaxRate}`;
-  //     }
-  //   }
-
-  //   setFormData(updatedFormData);
-  // };
-
-  // //WITH STATE
-  // const handleInputChange = (e) => {
-  //   const { name, value } = e.target;
-  //   const updatedFormData = { ...formData, [name]: value };
-
-  //   if ((name === "mrp" || name === "pricePerItem") && !isManualDiscount) {
-  //     // Auto-calculate discount only if the user hasn't manually changed it
-  //     const discount = updatedFormData.mrp - updatedFormData.pricePerItem;
-  //     updatedFormData.discount = discount > 0 ? discount : 0;
-  //   }
-
-  //   if (name === "itemTaxRate" || name === "state") {
-  //     // Determine the tax type based on the selected state
-  //     if (value === "Tamil Nadu") {
-  //       updatedFormData.itemTaxType = `CGST ${formData.itemTaxRate}%, SGST ${formData.itemTaxRate}%`;
-  //     } else {
-  //       updatedFormData.itemTaxType = `IGST ${formData.itemTaxRate}`;
-  //     }
-  //   }
-
-  //   if (name === "discount") {
-  //     setIsManualDiscount(true); // Mark that the discount is manually changed
-  //   }
-
-  //   setFormData(updatedFormData);
-  // };
-
   //WITH STATE AND STATE CODE
-    const handleInputChange = (e) => {
+  const handleInputChange = (e) => {
     const { name, value } = e.target;
     const updatedFormData = { ...formData, [name]: value };
 
@@ -124,9 +67,11 @@ const Billing = () => {
 
     // Determine tax type and state code based on the selected state
     if (name === "itemTaxRate" || name === "state") {
-      const stateOption = stateDropdownOptions().find(option => option.value === updatedFormData.state);
+      const stateOption = stateDropdownOptions().find(
+        (option) => option.value === updatedFormData.state
+      );
       const taxRate = formData.itemTaxRate || 0;
-      
+
       if (stateOption) {
         updatedFormData.stateCode = stateOption.code; // Changed from gstCode to stateCode
         if (updatedFormData.state === "Tamil Nadu") {
@@ -135,7 +80,7 @@ const Billing = () => {
           updatedFormData.itemTaxType = `IGST ${taxRate}`;
         }
       } else {
-        updatedFormData.stateCode = ''; // Reset stateCode if state is not found
+        updatedFormData.stateCode = ""; // Reset stateCode if state is not found
       }
     }
 
@@ -217,22 +162,19 @@ const Billing = () => {
       itemName: "",
       quantity: "",
       pricePerItem: "",
-      // itemTaxRate: "", // Reset item tax rate
-      // itemTaxType: "" // Reset item tax type
     });
   };
 
   const addBuyingProductToInvoice = () => {
     // Perform validation specific to buying form
-   
-  
+
     // Calculate total amount for buying form
     let totalAmount = formData.quantity * formData.pricePerItem;
-  
+
     // Calculate tax and total with tax
     const taxAmount = calculateTax(totalAmount, formData.itemTaxRate);
     const totalAmountWithTax = totalAmount + parseFloat(taxAmount);
-  
+
     // Create new item for the invoice
     const newItem = {
       ...formData,
@@ -241,11 +183,11 @@ const Billing = () => {
       totalAmountWithTax,
       // Add any other relevant fields for buying form
     };
-  
+
     // Update invoice items with the new buying item
     setInvoicePurchaseItems([...invoicePurchaseItems, newItem]);
     updateTaxAndTotal([...invoicePurchaseItems, newItem]);
-  
+
     // Clear form fields after adding to invoice
     setFormData({
       ...formData,
@@ -255,65 +197,6 @@ const Billing = () => {
       // Reset other relevant fields for buying form
     });
   };
-  
-
-  // const updateTaxAndTotal = (items, shippingCharges) => {
-  //   // Calculate subtotal
-  //   const subtotal = items.reduce((acc, item) => acc + item.totalAmount, 0);
-    
-  //   // Calculate total tax
-  //   const totalTax = items.reduce(
-  //     (acc, item) => acc + parseFloat(item.taxAmount),
-  //     0
-  //   );
-    
-  //   // Calculate total with tax and shipping charges
-  //   const totalWithTaxAmt = subtotal + totalTax + shippingCharges;
-  
-  //   // Update state
-  //   setSubtotal(subtotal);
-  //   setTaxAmount(totalTax.toFixed(2));
-  //   setShippingCharges(shippingCharges);  // Add this line
-  //   setTotalWithTax(totalWithTaxAmt.toFixed(2));
-  // };
-  
-
-  // const updateTaxAndTotal = (items) => {
-  //   const subtotal = items.reduce((acc, item) => acc + item.totalAmount, 0);
-  //   const totalTax = items.reduce(
-  //     (acc, item) => acc + parseFloat(item.taxAmount),
-  //     0
-  //   );
-  //   const totalWithTaxAmt = subtotal + totalTax;
-  
-
-  //   setSubtotal(subtotal);
-  //   setTaxAmount(totalTax.toFixed(2));
-  //   setShippingCharges(shippingCharges)
-  //   setTotalWithTax(totalWithTaxAmt.toFixed(2));
-  // };
-  //new 
-    // Function to update totals based on items and shipping charges
-  //   const updateTaxAndTotal = (items, shippingCharges) => {
-  //     const subtotal = items.reduce((acc, item) => acc + item.totalAmount, 0);
-  //     const totalTax = items.reduce(
-  //       (acc, item) => acc + parseFloat(item.taxAmount || 0),
-  //       0
-  //     );
-  //     const totalWithTaxAmt = subtotal + totalTax;
-      
-  //     const shippingChargesAmount = parseFloat(shippingCharges) || 0;
-  //     const finalTotalWithShipping = totalWithTaxAmt + shippingChargesAmount;
-  
-  //     setSubtotal(subtotal);
-  //     setTaxAmount(totalTax.toFixed(2));
-  //     setTotalWithTax(finalTotalWithShipping.toFixed(2));
-  //   };
-  
-  //   // Effect to recalculate totals whenever items or shippingCharges change
-  //   useEffect(() => {
-  //     updateTaxAndTotal(invoiceItems, shippingCharges);
-  //   }, [invoiceItems, shippingCharges]);
 
   // console.log(subtotal + "hello")
   const updateTaxAndTotal = (items, shippingCharges) => {
@@ -342,16 +225,16 @@ const Billing = () => {
     setSubtotal(subtotalWithShipping);
     setTaxAmount(totalTax.toFixed(2));
     setTotalWithTax(finalTotalWithTax.toFixed(2));
-};
+  };
 
-// Effect to recalculate totals whenever items or shippingCharges change
-useEffect(() => {
+  // Effect to recalculate totals whenever items or shippingCharges change
+
+  useEffect(() => {
     updateTaxAndTotal(invoiceItems, shippingCharges);
-}, [invoiceItems, shippingCharges]);
+  }, [invoiceItems, shippingCharges, formData.transactionType]);
 
-// Log the current subtotal for debugging
-console.log("Current subtotal (outside function):", subtotal);
-
+  // Log the current subtotal for debugging
+  console.log("Current subtotal (outside function):", subtotal);
 
   const calculateTotalWithoutTax = (items) => {
     const subtotal = items.reduce((acc, item) => acc + item.totalAmount, 0);
@@ -374,10 +257,6 @@ console.log("Current subtotal (outside function):", subtotal);
     onAfterPrint: () => console.log("Print complete"),
   });
 
-  // const handlePrint = useReactToPrint({
-  //   content: () => invoiceRef.current,
-  // });
-
   const options = taxDropdownOptions();
   const stateOptions = stateDropdownOptions();
 
@@ -391,27 +270,8 @@ console.log("Current subtotal (outside function):", subtotal);
 
     updateTaxAndTotal(invoiceItems);
   };
-   
-// const arr = [1,1,2,4,5,6,7,1,4,7,]
-// const removeDuplicate = (arr) => {
 
-//   return arr.filter((names, numbers) => arr.indexOf(names) === numbers)
-// }
-// console.log(removeDuplicate(arr))
-
-// const arr = [1,2,4,6,7,7,3,5,6,3]
-
-// const removeValue = (arr, value) => {
-//   return arr.filter(item => item !== value)
-// }
-// console.log(removeValue(arr, 7))
   const totalInWords = convertNumberToWordsWithDecimal(totalWithTax);
-
-const arr = [1,2,3,4,5,6,7,7,3,5,6,3];
-const removeDuplicates = (arr) => {
-  return arr.filter((item, index) => arr.indexOf(item) === index )
-}
-console.log(removeDuplicates(arr))
 
   return (
     <div className="max-w-2xl mx-auto p-6 bg-white shadow-lg rounded-lg">
@@ -487,9 +347,8 @@ console.log(removeDuplicates(arr))
         subtotal={subtotal}
         totalInWords={totalInWords}
         shippingCharges={shippingCharges}
-     
       />
-       <PurchaseInvoiceDetails
+      <PurchaseInvoiceDetails
         invoiceItems={invoiceItems}
         totalWithoutTax={totalWithoutTax}
         formData={formData}

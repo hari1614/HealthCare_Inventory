@@ -14,7 +14,6 @@ import AddUsers from "./admin/AddUsers";
 import UserProfile from "./pages/UserProfile";
 import Notifications from "./components/reusable/Notifications";
 import Forms from "./components/Forms";
-import Billing from "./components/Billing";
 import Bill from "./components/Billing/Bill";
 import HealthCareInventoryOverview from "./pages/About";
 import "./App.css";

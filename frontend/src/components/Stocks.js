@@ -242,7 +242,7 @@ const Stocks = () => {
                   Select a category
                 </option>
                 <option value="Fruits">Fruits</option>
-                <option value="Cars">Cars</option>
+                <option value="Car">Car</option>
                 <option value="Food">Food</option>
                 <option value="Chocolates">Chocolates</option>
                 <option value="Games">Games</option>
@@ -390,7 +390,7 @@ const Stocks = () => {
         </div>
 
         {/* Edit Purchase Modal */}
-        {editingPurchase && (
+        {/* {editingPurchase && (
           <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50">
             <div className="bg-white p-4 rounded-lg shadow-lg">
               <h2 className="text-xl font-bold mb-4 text-gray-700">
@@ -472,7 +472,105 @@ const Stocks = () => {
               </div>
             </div>
           </div>
-        )}
+        )} */}
+        {/* Edit Purchase Modal */}
+{editingPurchase && (
+  <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50 p-4">
+    <div className="bg-white p-6 rounded-lg shadow-xl w-full max-w-md mx-auto">
+      <h2 className="text-lg font-semibold mb-4 text-gray-800">
+        Edit Purchase
+      </h2>
+      <div className="space-y-4">
+        {/* Product Name */}
+        <div>
+          <label
+            className="block text-gray-700 text-sm font-medium mb-1"
+            htmlFor="updateProductName"
+          >
+            Product Name
+          </label>
+          <input
+            type="text"
+            id="updateProductName"
+            value={updatedProductName}
+            onChange={(e) => setUpdatedProductName(e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out"
+            placeholder="Enter product name"
+          />
+        </div>
+        
+        {/* HSN Code */}
+        <div>
+          <label
+            className="block text-gray-700 text-sm font-medium mb-1"
+            htmlFor="updateHsnCode"
+          >
+            HSN Code
+          </label>
+          <input
+            type="text"
+            id="updateHsnCode"
+            value={updatedHsnCode}
+            onChange={(e) => setUpdatedHsnCode(e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out"
+            placeholder="Enter HSN code"
+          />
+        </div>
+        
+        {/* Category */}
+        <div>
+          <label
+            className="block text-gray-700 text-sm font-medium mb-1"
+            htmlFor="updateCategory"
+          >
+            Category
+          </label>
+          <input
+            type="text"
+            id="updateCategory"
+            value={updatedCategory}
+            onChange={(e) => setUpdatedCategory(e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out"
+            placeholder="Enter category"
+          />
+        </div>
+        
+        {/* Quantity */}
+        <div>
+          <label
+            className="block text-gray-700 text-sm font-medium mb-1"
+            htmlFor="updateQuantity"
+          >
+            Quantity
+          </label>
+          <input
+            type="number"
+            id="updateQuantity"
+            value={updatedQuantity}
+            onChange={(e) => setUpdatedQuantity(e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out"
+            placeholder="Enter quantity"
+          />
+        </div>
+      </div>
+      <div className="flex justify-end mt-6 space-x-2">
+        <button
+          onClick={handleUpdate}
+          className="px-4 py-2 bg-blue-600 text-white rounded-md shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-150 ease-in-out"
+        >
+          Update
+        </button>
+        <button
+          onClick={() => setEditingPurchase(null)}
+          className="px-4 py-2 bg-gray-600 text-white rounded-md shadow-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 transition duration-150 ease-in-out"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
       </div>
     </>
   );

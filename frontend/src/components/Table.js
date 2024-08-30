@@ -128,16 +128,6 @@ const Table = ({
   const handleDeleteClick = async () => {
     setProductToDelete(_id); // Set the product ID to delete
     setIsModalOpen(true); // Open the confirmation modal
-    // setIsLoading(true);
-    // setFeedback("");
-    // try {
-    //   const feedbackMessage = await handleDelete();
-    //   setFeedback(feedbackMessage);
-    // } catch (error) {
-    //   setFeedback("Failed to delete product");
-    // } finally {
-    //   setIsLoading(false);
-    // }
   };
 
   const confirmDelete = async () => {
