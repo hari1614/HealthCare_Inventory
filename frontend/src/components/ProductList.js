@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import { useParams } from 'react-router-dom';
 import { getUnitAndKgOptions } from "./utils/utils";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -18,6 +19,7 @@ import ConfirmationModal from "./reusable/ConfirmationModal";
 import "../css/ProductList.css";
 
 const ProductList = () => {
+  const { id } = useParams(); // Get the product ID from URL params
   const { products, dispatch } = useProductContext();
   const [selectedProductIds, setSelectedProductIds] = useState([]);
   const [selectedType, setSelectedType] = useState("All Products");
@@ -32,6 +34,40 @@ const ProductList = () => {
   const { user } = useAuthContext();
 
   useFetch(user, selectedType, selectedQuantity, dispatch); // Use the custom hook
+  const rowRefs = useRef({}); // Create a ref to store row elements
+
+
+  useEffect(() => {
+    if (id && products && products.length) {
+      // Find the index of the product with the given ID
+      const productIndex = products.findIndex(product => product._id === id);
+      if (productIndex !== -1) {
+        // Calculate the page number for this product
+        const pageIndex = Math.floor(productIndex / itemsPerPage) + 1;
+
+        if (pageIndex !== currentPage) {
+          setCurrentPage(pageIndex);
+        } else {
+          // Scroll to the row after the page has updated
+          const timer = setTimeout(() => {
+            rowRefs.current[id]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }, 300); // Adjust the delay if needed
+          return () => clearTimeout(timer);
+        }
+      }
+    }
+  }, [id, products, currentPage, itemsPerPage]);
+
+  // useEffect(() => {
+  //   // Ensure that the scroll only happens if `id` is present and `rowRefs.current[id]` exists
+  //   if (id && rowRefs.current[id]) {
+  //     const timer = setTimeout(() => {
+  //       rowRefs.current[id]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  //     }, 200); // Adjust the delay if needed
+  //     return () => clearTimeout(timer);
+  //   }
+  // }, [id, products._id]);
+
 
   const handleProductChange = (event) => {
     const productId = event.target.value;
@@ -284,42 +320,42 @@ const ProductList = () => {
             id="productTable"
             className="w-full table-auto text-sm text-left rtl:text-right text-blue-100 dark:text-blue-100 "
           >
-            <thead className="bg-[#fff5] sticky top-0 bg-blue-600  rounded-xl shadow-lg transition-transform text-white border-b border-blue-400 dark:text-white z-10">
+            <thead className="bg-sea sticky top-0 bg-blue-600  rounded-xl shadow-lg transition-transform text-white border-b border-blue-400 dark:text-white z-10">
               <tr>
-                <th className="px-4 py-3 bg-sea sm:px-8 md:py-4 lg:py-3">
+                <th className="px-2 py-1 sm:px-4 sm:py-4">
                   S.No
                 </th>
-                <th className="px-4 py-3 bg-sea sm:px-8 md:py-4 lg:py-3">
+                <th className="px-2 py-1 sm:px-4 sm:py-4">
                   Name
                 </th>
-                <th className="px-4 py-3 bg-sea sm:px-8 md:py-4 lg:py-3">
+                <th className="px-2 py-1 sm:px-4 sm:py-4">
                   Product/No
                 </th>
-                <th className="px-4 py-3 bg-sea sm:px-8 md:py-4 lg:py-3">
+                <th className="px-2 py-1 sm:px-4 sm:py-4">
                   Unit type/Kg
                 </th>
-                <th className="px-4 py-3 bg-sea sm:px-8 md:py-4 lg:py-3">
+                <th className="px-2 py-1 sm:px-4 sm:py-4">
                   Stock
                 </th>
 
-                <th className="px-4 py-3 bg-sea sm:px-8 md:py-4 lg:py-3">
+                <th className="px-2 py-1 sm:px-4 sm:py-4">
                   MRP
                 </th>
-                <th className="px-4 py-3 bg-sea sm:px-8 md:py-4 lg:py-3">
+                <th className="px-2 py-1 sm:px-4 sm:py-4">
                   Price
                 </th>
-                <th className="px-4 py-3 bg-sea sm:px-8 md:py-4 lg:py-3">
+                <th className="px-2 py-1 sm:px-4 sm:py-4">
                   Tax%
                 </th>
-                <th className="px-6 py-3 bg-sea sm:px-8 md:py-4 lg:py-3">
+                <th className="px-2 py-1 sm:px-4 sm:py-4">
                   Tax Amount
                 </th>
-                <th className="px-6 py-3 bg-sea sm:px-8 md:py-4 lg:py-4">
+                <th className="px-2 py-1 sm:px-4 sm:py-4">
                   {" "}
                   Date
                 </th>
                 {user?.admin && (
-                  <th className="px-6 py-3 bg-sea sm:px-8 md:py-4 lg:py-4">
+                  <th className="px-2 py-1 sm:px-4 sm:py-4">
                     Delete & Edit
                   </th>
                 )}
@@ -330,6 +366,8 @@ const ProductList = () => {
                 currentProducts.map((product, index) => (
                   <Table
                     key={product._id}
+                    ref={(el) => (rowRefs.current[product._id] = el)} // Assign ref to the row
+                    {...product}
                     index={index} // Pass the 1-based index
                     name={product.name}
                     productNum={product.productNum}
@@ -362,7 +400,7 @@ const ProductList = () => {
         <button
           onClick={() => handlePageChange(currentPage - 1)}
           disabled={currentPage === 1}
-          className="px-4 py-2 bg-gray-500 hover:bg-hover2 text-white text-xs font-semibold rounded disabled:opacity-50 flex items-center"
+          className="px-4 py-2 bg-sea hover:bg-hover1 text-white text-xs font-semibold rounded disabled:opacity-50 flex items-center"
         >
           <FontAwesomeIcon className="mr-2" icon={faArrowLeft} />
           <span className="hidden sm:inline">Previous</span>
@@ -373,7 +411,7 @@ const ProductList = () => {
         <button
           onClick={() => handlePageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
-          className="px-4 py-2 bg-gray-500 hover:bg-hover2 text-white text-xs font-semibold rounded disabled:opacity-50 flex items-center"
+          className="px-4 py-2 bg-sea hover:bg-hover1 text-white text-xs font-semibold rounded disabled:opacity-50 flex items-center"
         >
           <span className="hidden sm:inline">Next</span>
           <FontAwesomeIcon className="ml-2" icon={faArrowRight} />

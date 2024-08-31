@@ -34,6 +34,10 @@ function App() {
               path="/"
               element={user ? <ProductList /> : <Navigate to="/about" />}
             />
+              <Route
+              path="/:id"
+              element={user ? <ProductList /> : <Navigate to="/about" />}
+            />
             <Route
               path="/products"
               element={user ? <FetchData /> : <Navigate to="/login" />}

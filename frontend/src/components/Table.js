@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, forwardRef } from "react";
 import Tooltip from "./reusable/Tooltip";
 import loadingGif from "../assets/loading.gif";
 import ConfirmDeleteModal from "./reusable/ConfirmDeleteModal";
@@ -8,13 +8,13 @@ import { useProductContext } from "./hooks/useProductContext";
 import { useProductActions } from "./hooks/useProductActions";
 import { getUnitAndKgOptions } from "./utils/utils";
 import { useSaveProduct } from "./hooks/useSaveProduct";
-import { formatDateToInputValue } from "./utils/dateUtils";
+import { formatDateToInputValue, formatDateToYYYYMMDD } from "./utils/dateUtils";
 import { useAuthContext } from "./hooks/useAuthContext";
 import { taxDropdownOptions } from "./utils/utils";
 
 import "../css/Table.css";
 
-const Table = ({
+const Table = forwardRef(({
   _id,
   index,
   name,
@@ -30,7 +30,7 @@ const Table = ({
   selectedType,
   currentPage,
   itemsPerPage
-}) => {
+}, ref) => {
   const { dispatch } = useProductContext();
   const [selectedQuantity, setSelectedQuantity] = useState("1");
   const [selectedQuantityPrice, setSelectedQuantityPrice] = useState(price);
@@ -168,24 +168,24 @@ const Table = ({
 
   return (
     <>
-      <tr className="bg-sea hover:bg-hover1 text-white-500 border-b border-blue-400">
-        <td className="px-4 py-2 sm:px-8 md:py-6 lg:py-4 font-medium text-sm">
+      <tr ref={ref} className="bg-white hover:bg-gray-300 text-gray-500 border border-gray-300">
+        <td className="px-2 py-1 sm:px-4 sm:py-2 font-medium text-sm border">
           {(currentPage - 1) * itemsPerPage + index + 1}
         </td>
-        <td className="px-4 py-2 whitespace-nowrap text-transform: capitalize font-medium text-sm text-black-40 whitespace-wrap dark:text-blue-100 sm:px-8 md:py-6 lg:py-4">
+        <td className="border px-2 py-2 whitespace-nowrap text-transform: capitalize font-medium text-sm text-gray-600 whitespace-wrap dark:text-blue-100 sm:px-8 md:py-6 lg:py-4">
           {isEditing ? (
             <input
               type="text"
               name="name"
               value={editedData.name}
               onChange={handleChangeTwo}
-              className="block w-20 text-black border border-gray-300 rounded-md px-3 py-2 leading-tight focus:outline-none focus:border-blue-500"
+              className="block w-20 border text-black border-gray-300 rounded-md px-3 py-2 leading-tight focus:outline-none focus:border-blue-500"
             />
           ) : (
-            <span className="text-white">{editedData.name}</span>
+            <span className="">{editedData.name}</span>
           )}
         </td>
-        <td className="px-4 py-2 sm:px-8 md:py-6 lg:py-4 font-medium text-sm">
+        <td className="border px-2 py-1 sm:px-4 sm:py-2 font-medium text-sm text-gray-600">
           {isEditing ? (
             <input
               type="number"
@@ -195,13 +195,13 @@ const Table = ({
               className="block w-20 text-black border border-gray-300 rounded-md px-3 py-2 leading-tight focus:outline-none focus:border-blue-500"
             />
           ) : (
-            <span className="text-white">{editedData.productNum}</span>
+            <span className="">{editedData.productNum}</span>
           )}
         </td>
-        <td className="sm:px-8 md:py-6 lg:py-4 font-medium text-sm text-white">
+        <td className="border px-2 py-1 sm:px-4 sm:py-2 font-medium text-sm text-gray-600">
           {unitAndKg}
         </td>
-        <td className="px-4 py-2 sm:px-8 md:py-6 lg:py-4">
+        <td className="px-2 py-1 sm:px-4 sm:py-2 font-medium text-sm text-gray-600">
           {isEditing ? (
             <input
               type="text"
@@ -211,13 +211,13 @@ const Table = ({
               className="block w-20 text-black bg-white border border-gray-300 rounded-md px-3 py-2 leading-tight focus:outline-none focus:border-blue-500"
             />
           ) : (
-            <span className="font-medium text-sm text-white">
+            <span className="">
               {editedData.stock}
             </span>
           )}
         </td>
 
-        <td className="px-4 py-2 sm:px-8 md:py-6 lg:py-4">
+        <td className="border px-2 py-1 sm:px-4 sm:py-2 lg:py-4 font-medium text-sm text-gray-600">
           {isEditing ? (
             <input
               type="number"
@@ -227,12 +227,12 @@ const Table = ({
               className="block w-20 text-black bg-white border border-gray-300 rounded-md px-3 py-2 leading-tight focus:outline-none focus:border-blue-500"
             />
           ) : (
-            <span className="font-medium text-sm text-white">
+            <span className="">
               {editedData.mrp}
             </span>
           )}
         </td>
-        <td className="px-4 py-2 sm:px-8 md:py-6 lg:py-4">
+        <td className="border px-2 py-1 sm:px-4 sm:py-2 lg:py-4 font-medium text-sm text-gray-600">
           {isEditing ? (
             <input
               type="number"
@@ -242,12 +242,12 @@ const Table = ({
               className="block w-20 text-black bg-white border border-gray-300 rounded-md px-3 py-2 leading-tight focus:outline-none focus:border-blue-500"
             />
           ) : (
-            <span className="font-medium text-sm text-white">
+            <span className="">
               {editedData.price}
             </span>
           )}
         </td>
-        <td className="px-4 py-2 sm:px-8 md:py-6 lg:py-4">
+        <td className="border px-2 py-1 sm:px-4 sm:py-2 font-medium text-sm text-gray-600">
           {isEditing ? (
             <select
               id="types"
@@ -262,10 +262,10 @@ const Table = ({
               ))}
             </select>
           ) : (
-            <span className="font-medium text-sm text-white">{` ${taxRate}  %`}</span>
+            <span className="">{` ${taxRate}  %`}</span>
           )}
         </td>
-        <td className="px-4 py-2 sm:px-8 md:py-6 lg:py-4">
+        <td className="border px-2 py-1 sm:px-4 sm:py-2 font-medium text-sm text-gray-600">
           {isEditing ? (
             <input
               type="number"
@@ -276,12 +276,12 @@ const Table = ({
               readOnly
             />
           ) : (
-            <span className="sm:px-8 md:py-6 lg:py-4 font-medium text-sm text-white">
+            <span className="">
               {taxPercentage}
             </span>
           )}
         </td>
-        <td className="px-4 py-2sm:px-8 md:py-6 lg:py-4 font-medium text-sm text-white">
+        <td className="border px-2 py-1 sm:px-4 sm:py-2 font-medium text-sm text-gray-600">
           {isEditing ? (
             <input
               type="date"
@@ -291,44 +291,44 @@ const Table = ({
               className="block text-black bg-white border border-gray-300 rounded-md px-3 py-2 leading-tight focus:outline-none focus:border-blue-500"
             />
           ) : (
-            <span className="text-white-500">
-              {formatDateToInputValue(date)}
+            <span className="">
+              {formatDateToYYYYMMDD(date)}
             </span>
           )}
         </td>
         {user?.admin && (
-          <td className="px-4 py-2 sm:px-8 md:py-6 lg:py-4">
+          <td className="border px-2 py-1 sm:px-4 sm:py-2 font-medium text-sm text-gray-600">
             {isEditing ? (
-              <div className="flex">
+              <div className="flex flex-col items-center justify-center space-y-2">
                 <button
                   onClick={() => handleSaveClick(editedData)}
-                  className="text-blue-500 hover:text-blue-700 mr-2"
+                  className="text-center text-blue-500 hover:text-blue-700 mr-2"
                   disabled={isSaving}
                 >
                   {isSaving ? "Saving..." : "Save"}
                 </button>
                 <button
                   onClick={() => setIsEditing(false)}
-                  className="text-gray-500 hover:text-gray-700"
+                  className="text-center text-gray-500 hover:text-gray-700"
                 >
                   Cancel
                 </button>
               </div>
             ) : (
-              <div className="flex font-medium text-white">
+              <div className="flex justify-center font-medium">
                 <Tooltip text="Delete" position="top">
                   <button
                     onClick={handleDeleteClick}
-                    className="hover:text-red-700 mr-2"
+                    className="bg-gray-400 text-white rounded p-2 hover:text-red-700 mr-2"
                   >
-                    <span className="text-sm">Delete</span>
+                    <span className="text-xs">Delete</span>
                     <FontAwesomeIcon icon={faTrash} className="ml-1" />
                   </button>
                 </Tooltip>
                 <Tooltip text="Edit" position="top">
                   {" "}
-                  <button onClick={handleEdit} className="hover:text-blue-700">
-                    <span className="text-sm"> Edit </span>
+                  <button onClick={handleEdit} className="bg-sea text-white rounded p-2 hover:text-blue-700">
+                    <span className="text-xs"> Edit </span>
                     <FontAwesomeIcon icon={faPenSquare} className="ml-1" />
                   </button>
                 </Tooltip>
@@ -371,6 +371,6 @@ const Table = ({
       )}
     </>
   );
-};
+});
 
 export default Table;

@@ -9,7 +9,7 @@ import {
 import loadingGif from "../assets/loading.gif";
 import { useAuthContext } from "./hooks/useAuthContext";
 import usePurchase from "./hooks/usePurchase";
-import { formatDateToInputValue } from "./utils/dateUtils";
+import { formatDateToInputValue, formatDateToYYYYMMDD } from "./utils/dateUtils";
 
 const Stocks = () => {
   const { user } = useAuthContext();
@@ -318,8 +318,8 @@ const Stocks = () => {
               <tbody>
                 {paginatedPurchases.map((purchase, index) => (
                   <tr
-                    key={purchase.id}
-                    className="bg-white hover:bg-gray-100 border-b border-gray-300 text-xs font-medium text-gray-600"
+                    key={purchase._id}
+                    className="bg-white hover:bg-gray-300 border-b border-gray-300 text-xs font-medium text-gray-600"
                   >
                     <td className="px-2 py-1 sm:px-4 sm:py-2">
                       {(currentPage - 1) * pageSize + index + 1}
@@ -337,7 +337,8 @@ const Stocks = () => {
                       {purchase.quantity}
                     </td>
                     <td className="px-2 py-1 sm:px-4 sm:py-2">
-                      {formatDateToInputValue(new Date(purchase.date))}
+                      {/* {formatDateToInputValue(new Date(purchase.date))} */}
+                      {formatDateToYYYYMMDD(purchase.date)}
                     </td>
                     <td className="px-2 py-1 sm:px-4 sm:py-2 flex gap-1">
                       <button

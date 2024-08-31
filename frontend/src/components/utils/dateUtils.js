@@ -5,7 +5,7 @@ import { format, parseISO } from 'date-fns';
 // Convert ISO date to 'yyyy-MM-dd' format
 export const formatDateToYYYYMMDD = (isoDate) => {
   const date = parseISO(isoDate);
-  return format(date, 'yyyy-MM-dd');
+  return format(date, 'dd-MM-yyyy');
 };
 
 // Convert 'yyyy-MM-dd' format to ISO format
