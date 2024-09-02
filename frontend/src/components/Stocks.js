@@ -171,7 +171,7 @@ const Stocks = () => {
 
   return (
     <>
-      <div className="text-gray-900 rounded-lg mb-6 mt-5 flex justify-center">
+      {/* <div className="text-gray-900 rounded-lg mb-6 mt-5 flex justify-center">
         <div>
           <h1 className="text-3xl font-extrabold leading-tight text-center">
             Purchase / Stock Details
@@ -180,7 +180,7 @@ const Stocks = () => {
             Manage and view your purchase and stock information with ease.
           </p>
         </div>
-      </div>
+      </div> */}
       <div className="overflow-x-auto container mx-auto px-4 py-6 bg-white shadow-md rounded-lg border border-gray-200 m-8">
         {/* Filters */}
         <form className="max-w-4xl mx-auto p-4 space-y-4 bg-white shadow-sm rounded-md dark:bg-gray-800">
