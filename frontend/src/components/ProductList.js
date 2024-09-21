@@ -314,8 +314,8 @@ const ProductList = () => {
         </div>
       </form>
 
-      <div className="overflow-x-auto shadow-xl mt-8 w-[100%] ml-4 rounded-md shadow-custom">
-        <div className=" relative max-h-[calc(70vh-7rem)] overflow-y-auto">
+      <div className=" overflow-x-auto shadow-xl mt-8 w-[100%] ml-4 rounded-md shadow-custom">
+        <div className="table-scroll relative max-h-[calc(70vh-7rem)] overflow-y-auto">
           <table
             id="productTable"
             className="w-full table-auto text-sm text-left rtl:text-right text-blue-100 dark:text-blue-100 "

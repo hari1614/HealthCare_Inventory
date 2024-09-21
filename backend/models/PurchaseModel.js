@@ -24,7 +24,7 @@ const purchaseSchema = new Schema(
             type: Date, 
             required: true,
         },
-    }, {timestamps: true}
+    }
 );
 
 const Purchase = mongoose.model('Purchase', purchaseSchema);

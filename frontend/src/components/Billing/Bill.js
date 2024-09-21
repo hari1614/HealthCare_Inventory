@@ -13,7 +13,7 @@ const Billing = () => {
   const { products } = useProductContext();
   const [selectedProductId, setSelectedProductId] = useState(null);
   const [formData, setFormData] = useState({
-    transactionType: "selling",
+    transactionType: "Selling",
     itemName: "",
     hsnCode: "",
     quantity: "",

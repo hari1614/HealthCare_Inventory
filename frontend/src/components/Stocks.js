@@ -183,8 +183,14 @@ const Stocks = () => {
       </div> */}
       <div className="overflow-x-auto container mx-auto px-4 py-6 bg-white shadow-md rounded-lg border border-gray-200 m-8">
         {/* Filters */}
-        <form className="max-w-4xl mx-auto p-4 space-y-4 bg-white shadow-sm rounded-md dark:bg-gray-800">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+      
+     
+      
+
+        {/* Table */}
+        <div className="relative max-h-[calc(70vh-7rem)] overflow-x-auto">
+        <form className=" p-4 space-y-4 bg-white shadow-sm rounded-md dark:bg-gray-800">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
             {/* Product Name Filter */}
             <div className="flex flex-col">
               <label
@@ -283,13 +289,11 @@ const Stocks = () => {
                 className="text-xs font-semibold text-gray-600 bg-gray-50 border border-gray-300 h-10 rounded-md focus:ring-teal-500 focus:border-teal-500 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 dark:focus:ring-teal-500 dark:focus:border-teal-500"
               />
             </div>
+           
           </div>
-        </form>
-
-        {/* Table */}
-        <div className="relative max-h-[calc(70vh-7rem)] overflow-x-auto">
+          </form>
           {paginatedPurchases.length > 0 ? (
-            <table className="w-[70%] mx-auto bg-white border border-gray-300 rounded-lg shadow-md">
+            <table className="w-full mx-auto bg-white border border-gray-300 rounded-lg shadow-md">
               <thead className="sticky top-0 bg-sea text-white border-b border-blue-400">
                 <tr className="text-left text-xs font-medium">
                   <th className="px-2 py-1 sm:px-4 sm:py-2" scope="col">

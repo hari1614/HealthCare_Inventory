@@ -182,7 +182,7 @@ const Table = forwardRef(({
               className="block w-20 border text-black border-gray-300 rounded-md px-3 py-2 leading-tight focus:outline-none focus:border-blue-500"
             />
           ) : (
-            <span className="">{editedData.name}</span>
+            <span className="text-gray-600">{editedData.name}</span>
           )}
         </td>
         <td className="border px-2 py-1 sm:px-4 sm:py-2 font-medium text-sm text-gray-600">

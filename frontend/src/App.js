@@ -24,9 +24,9 @@ function App() {
   console.log("User state:", user);
 
   return (
-    <div className="App">
+    <div className="max-w-screen flex flex-col min-h-screen">
       <header className="App-header"></header>
-      <main>
+      <main className="flex-1">
         <Router>
           <Navbar />
           <Routes>
@@ -54,6 +54,7 @@ function App() {
               path="/addusers"
               element={user ? <AddUsers /> : <Navigate to="/" />}
             />
+            {/* <Route path="/addusers" element={<AddUsers />} /> */}
             <Route
               path="/notification"
               element={user ? <Notifications /> : <Navigate to="/login" />}
@@ -75,9 +76,10 @@ function App() {
               }
             />
           </Routes>
-          <Footer />
+          
         </Router>
       </main>
+      <Footer />
     </div>
   );
 }

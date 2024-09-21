@@ -22,6 +22,7 @@ module.exports = {
       fontFamily : {
         'display':['Popins', 'sans-serif'],
         'body': ['Inter', 'sans-serif'],
+        'suse': ["Reddit Sans Condensed", "sans-serif"],
       },
     },
   },

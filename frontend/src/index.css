@@ -1,3 +1,24 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import url('https://fonts.googleapis.com/css2?family=Reddit+Sans+Condensed:wght@200..900&display=swap');
+
+.table-scroll::-webkit-scrollbar {
+    width: 2px;
+  }
+  
+  .table-scroll::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+  
+  .table-scroll::-webkit-scrollbar-thumb {
+    background: #d6cbcb80;
+  }
+  
+  .table-scroll::-webkit-scrollbar-thumb:hover {
+    background: #f1f1f1;
+  }
+  
+  *{
+    font-family:"Reddit Sans Condensed", "sans-serif";
+  }
